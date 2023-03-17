@@ -1,0 +1,69 @@
+3/14/2023
+12:23:48
+Created by Short Cut (4.4)
+Short Cut Program:  PSW_R.DEF
+
+-Wiring for CR10X-
+
+  Type T TC (1)
+    1H:  Blue
+    1L:  Red
+
+  Type T TC (2)
+    2H:  Blue
+    2L:  Red
+
+  Type T TC (3)
+    3H:  Blue
+    3L:  Red
+
+  CS616
+    G:  Clear
+    AG:  Black
+    4H:  Green
+    C1:  Orange
+    12V:  Red
+
+-Measurement Labels-
+
+  Default
+    1  BattV
+    2  ProgSig
+
+  Internal Temp
+    3  ITemp_C
+
+  Type T TC (1)
+    4  Temp_C
+
+  Type T TC (2)
+    5  Temp_C_1
+
+  Type T TC (3)
+    6  Temp_C_2
+
+  CS616
+    7  VW
+    8  PA_uS
+
+131 Output_Table  30.00 Min
+1 131 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 ITemp_C_AVG  L
+6 Temp_C_AVG  L
+7 Temp_C_1_AVG  L
+8 Temp_C_2_AVG  L
+9 VW_AVG  L
+10 PA_uS_AVG  L
+
+132 Output_Table 1440.00 Min
+1 132 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 BattV_MIN  L
+6 ProgSig  L
+
+Estimated final storage locations used per day:     486

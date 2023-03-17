@@ -1,0 +1,145 @@
+};CR10X
+;PSLS.DLD
+;Created by Short Cut (4.4)
+;$
+;:BattV    :ProgSig  :ITemp_C  :Temp_C   :Temp_C_1 
+;:Temp_C_2 :Temp_C_3 :Temp_C_4 :Temp_C_5 
+;$
+
+;%
+;Final Storage Label File for:  PSLS.SCW
+;Date:  3/14/2023
+;Time:  12:22:35
+;
+;101 Output_Table  30.00 Min
+;1 101 L
+;2 Year_RTM  L
+;3 Day_RTM  L
+;4 Hour_Minute_RTM  L
+;5 ITemp_C_AVG  L
+;6 Temp_C_AVG  L
+;7 Temp_C_1_AVG  L
+;8 Temp_C_2_AVG  L
+;9 Temp_C_3_AVG  L
+;10 Temp_C_4_AVG  L
+;11 Temp_C_5_AVG  L
+;
+;102 Output_Table 1440.00 Min
+;1 102 L
+;2 Year_RTM  L
+;3 Day_RTM  L
+;4 Hour_Minute_RTM  L
+;5 BattV_MIN  L
+;6 ProgSig  L
+;
+;Estimated final storage locations used per day:     534
+;%
+
+MODE 1
+SCAN RATE 30.0000
+
+1:P10
+1:1
+
+2:P92
+1:0
+2:1440
+3:30
+
+3:P19
+1:2
+
+4:P95
+
+5:P17
+1:3
+
+6:P14
+1:6
+2:1
+3:1
+4:1
+5:3
+6:4
+7:1
+8:0
+
+7:P92
+1:0
+2:30
+3:10
+
+8:P80
+1:1
+2:101
+
+9:P77
+1:1220
+
+10:P71
+1:1
+2:3
+
+11:P71
+1:1
+2:4
+
+12:P71
+1:1
+2:5
+
+13:P71
+1:1
+2:6
+
+14:P71
+1:1
+2:7
+
+15:P71
+1:1
+2:8
+
+16:P71
+1:1
+2:9
+
+17:P92
+1:0
+2:1440
+3:10
+
+18:P80
+1:1
+2:102
+
+19:P77
+1:1220
+
+20:P74
+1:1
+2:0
+3:1
+
+21:P70
+1:1
+2:2
+
+MODE 2
+SCAN RATE 10.0000
+1:P96
+1:71
+
+
+MODE 3
+
+MODE 10
+1:28
+2:118
+3:0
+
+MODE 12
+1:0000
+2:0000
+3:0000
+

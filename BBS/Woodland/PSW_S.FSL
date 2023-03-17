@@ -1,0 +1,25 @@
+Final Storage Label File for:  PSW_S.SCW
+Date:  3/14/2023
+Time:  12:24:20
+
+121 Output_Table  30.00 Min
+1 121 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 ITemp_C_AVG  L
+6 Temp_C_AVG  L
+7 Temp_C_1_AVG  L
+8 Temp_C_2_AVG  L
+9 VW_AVG  L
+10 PA_uS_AVG  L
+
+122 Output_Table 1440.00 Min
+1 122 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 BattV_MIN  L
+6 ProgSig  L
+
+Estimated final storage locations used per day:     486
