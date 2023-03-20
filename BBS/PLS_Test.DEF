@@ -1,0 +1,54 @@
+3/14/2023
+16:34:06
+Created by Short Cut (4.4)
+Short Cut Program:  PLS_Test.DEF
+
+-Wiring for CR10X-
+
+  SDI-12
+    G:  Ground
+    G:  Shield
+    C1:  Data Line
+    12V:  Power
+
+-Measurement Labels-
+
+  Default
+    1  BattV
+    2  ProgSig
+
+  SDI-12
+    3  Res1
+    4  Res2
+    5  Res3
+    6  Res4
+    7  Res5
+    8  Res6
+    9  Res7
+    10  Res8
+    11  Res9
+
+-Star 4 Table Entries-
+
+  Scan Rate:  0
+  SDI-12 Sensor
+    SDI_Address:  1
+    SDI_Address:  1
+
+101 Output_Table   5.00 Min
+1 101 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 Res1_AVG  L
+6 Res2_AVG  L
+
+102 Output_Table 1440.00 Min
+1 102 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 BattV_MIN  L
+6 ProgSig  L
+
+Estimated final storage locations used per day:    1734
