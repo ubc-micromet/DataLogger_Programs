@@ -1,8 +1,8 @@
 Final Storage Label File for:  PLS_Test.SCW
-Date:  3/14/2023
-Time:  16:34:06
+Date:  3/20/2023
+Time:  11:51:42
 
-101 Output_Table   5.00 Min
+101 Output_Table  30.00 Min
 1 101 L
 2 Year_RTM  L
 3 Day_RTM  L
@@ -18,4 +18,4 @@ Time:  16:34:06
 5 BattV_MIN  L
 6 ProgSig  L
 
-Estimated final storage locations used per day:    1734
+Estimated final storage locations used per day:     294

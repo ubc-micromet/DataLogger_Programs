@@ -21,9 +21,9 @@
       <string>10,Res8,0,0,0,0</string>
       <string>11,Res9,0,0,0,0</string>
     </inlocstringlist>
-    <Modified>False</Modified>
+    <Modified>True</Modified>
     <storagerates>
-      <string>5</string>
+      <string>30</string>
       <string>1440</string>
     </storagerates>
     <storageunits>
@@ -35,8 +35,8 @@
         <Ad_RecordCount>0</Ad_RecordCount>
         <Ad_Time>True</Ad_Time>
         <Ad_TimeValue>0</Ad_TimeValue>
-        <Ad_TimeUnits>5</Ad_TimeUnits>
-        <Ad_TimeInterval>5</Ad_TimeInterval>
+        <Ad_TimeUnits>30</Ad_TimeUnits>
+        <Ad_TimeInterval>30</Ad_TimeInterval>
         <Ad_FlagsPorts>False</Ad_FlagsPorts>
         <Ad_FlagOrPortIndex>0</Ad_FlagOrPortIndex>
         <Ad_HighLow>0</Ad_HighLow>
@@ -125,7 +125,7 @@
     <HighResolutionLabel>high</HighResolutionLabel>
     <LowResolutionLabel>low</LowResolutionLabel>
     <OutputIntervalUnits>Minutes</OutputIntervalUnits>
-    <ScanRate>10</ScanRate>
+    <ScanRate>30</ScanRate>
     <ScanUnits>Seconds</ScanUnits>
     <ScanUnitsIndex>0</ScanUnitsIndex>
     <SupportsStar4>True</SupportsStar4>
@@ -2314,6 +2314,25 @@
             <Group></Group>
             <RepsEnabled>False</RepsEnabled>
           </TAttribute>
+          <TStar4Attribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>SDI_Address</Caption>
+            <Handle>star4_1</Handle>
+            <HelpContext>0</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>1</Value>
+            <Units></Units>
+            <UnitsIndex>0</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>False</ShowInForm>
+            <ShowInGrid>False</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+          </TStar4Attribute>
           <TStar4Attribute>
             <AltLongSensorName></AltLongSensorName>
             <AltShortSensorName></AltShortSensorName>
