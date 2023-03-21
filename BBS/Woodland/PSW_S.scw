@@ -7,7 +7,7 @@
     </arrayids>
     <CreatedByDate></CreatedByDate>
     <CreatedByVersion></CreatedByVersion>
-    <IntermediateStorage>0</IntermediateStorage>
+    <IntermediateStorage>141</IntermediateStorage>
     <inlocstringlist>
       <string>1,BattV,0,0,0,0</string>
       <string>2,ProgSig,0,0,0,0</string>
@@ -17,6 +17,15 @@
       <string>6,Temp_C_2,0,0,0,0</string>
       <string>7,VW,0,0,0,0</string>
       <string>8,PA_uS,0,0,0,0</string>
+      <string>9,Res1,0,0,0,0</string>
+      <string>10,Res2,0,0,0,0</string>
+      <string>11,Res3,0,0,0,0</string>
+      <string>12,Res4,0,0,0,0</string>
+      <string>13,Res5,0,0,0,0</string>
+      <string>14,Res6,0,0,0,0</string>
+      <string>15,Res7,0,0,0,0</string>
+      <string>16,Res8,0,0,0,0</string>
+      <string>17,Res9,0,0,0,0</string>
     </inlocstringlist>
     <Modified>True</Modified>
     <storagerates>
@@ -87,7 +96,7 @@
       <datatables/>
     </crbasicprogram>
     <idgenerator>
-      <CurrentOrdinalNumber>10</CurrentOrdinalNumber>
+      <CurrentOrdinalNumber>12</CurrentOrdinalNumber>
     </idgenerator>
     <loggerid>
       <ID>0</ID>
@@ -109,7 +118,7 @@
     <Extension>.DLD</Extension>
     <Filename>C:\Program Files (x86)\Campbellsci\SCWin\cr10x.dlf</Filename>
     <Name>CR10X</Name>
-    <NextSensorID>6</NextSensorID>
+    <NextSensorID>7</NextSensorID>
     <DisplayName>CR10X</DisplayName>
     <MAXExcitationCurrent_mA>0</MAXExcitationCurrent_mA>
     <MAXExcitationVoltage_mV>0</MAXExcitationVoltage_mV>
@@ -984,7 +993,7 @@
     </channels>
     <connectors>
       <connector>
-        <Consumed>0.25</Consumed>
+        <Consumed>0.45</Consumed>
         <StripNumber>0</StripNumber>
         <TerminalName>G</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1004,6 +1013,36 @@
             <SensorName>CS616</SensorName>
             <WireCaption></WireCaption>
             <WireColor>Clear</WireColor>
+            <SensorGroup></SensorGroup>
+            <ConnectorGroup></ConnectorGroup>
+            <ChannelType>7</ChannelType>
+            <AllowWireMove>True</AllowWireMove>
+          </connectorattribute>
+          <connectorattribute>
+            <CalledBy>100</CalledBy>
+            <ConsumedPercent>10</ConsumedPercent>
+            <GPLabel></GPLabel>
+            <Handle>gnd1</Handle>
+            <JumperID>0</JumperID>
+            <SensorID>7</SensorID>
+            <SensorName>SDI-12</SensorName>
+            <WireCaption></WireCaption>
+            <WireColor>Ground</WireColor>
+            <SensorGroup></SensorGroup>
+            <ConnectorGroup></ConnectorGroup>
+            <ChannelType>7</ChannelType>
+            <AllowWireMove>True</AllowWireMove>
+          </connectorattribute>
+          <connectorattribute>
+            <CalledBy>100</CalledBy>
+            <ConsumedPercent>10</ConsumedPercent>
+            <GPLabel></GPLabel>
+            <Handle>gnd2</Handle>
+            <JumperID>0</JumperID>
+            <SensorID>7</SensorID>
+            <SensorName>SDI-12</SensorName>
+            <WireCaption></WireCaption>
+            <WireColor>Shield</WireColor>
             <SensorGroup></SensorGroup>
             <ConnectorGroup></ConnectorGroup>
             <ChannelType>7</ChannelType>
@@ -1617,7 +1656,23 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes/>
+        <connectorattributes>
+          <connectorattribute>
+            <CalledBy>100</CalledBy>
+            <ConsumedPercent>0</ConsumedPercent>
+            <GPLabel></GPLabel>
+            <Handle>Data</Handle>
+            <JumperID>0</JumperID>
+            <SensorID>7</SensorID>
+            <SensorName>SDI-12</SensorName>
+            <WireCaption></WireCaption>
+            <WireColor>Data Line</WireColor>
+            <SensorGroup></SensorGroup>
+            <ConnectorGroup></ConnectorGroup>
+            <ChannelType>12</ChannelType>
+            <AllowWireMove>True</AllowWireMove>
+          </connectorattribute>
+        </connectorattributes>
       </connector>
       <connector>
         <Consumed>0.25</Consumed>
@@ -1660,7 +1715,7 @@
         <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>0.1</Consumed>
+        <Consumed>0.2</Consumed>
         <StripNumber>2</StripNumber>
         <TerminalName>12V</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1680,6 +1735,21 @@
             <SensorName>CS616</SensorName>
             <WireCaption></WireCaption>
             <WireColor>Red</WireColor>
+            <SensorGroup></SensorGroup>
+            <ConnectorGroup></ConnectorGroup>
+            <ChannelType>8</ChannelType>
+            <AllowWireMove>True</AllowWireMove>
+          </connectorattribute>
+          <connectorattribute>
+            <CalledBy>100</CalledBy>
+            <ConsumedPercent>10</ConsumedPercent>
+            <GPLabel></GPLabel>
+            <Handle>Power</Handle>
+            <JumperID>0</JumperID>
+            <SensorID>7</SensorID>
+            <SensorName>SDI-12</SensorName>
+            <WireCaption></WireCaption>
+            <WireColor>Power</WireColor>
             <SensorGroup></SensorGroup>
             <ConnectorGroup></ConnectorGroup>
             <ChannelType>8</ChannelType>
@@ -1990,6 +2060,25 @@
                 <Options>Value Only,Value with Seconds,Value with Hr-Min,Value with Hr-Min-Sec</Options>
                 <OptionsIndex>1</OptionsIndex>
               </TComboAttribute>
+              <TImmutableIntegerAttribute>
+                <AltLongSensorName></AltLongSensorName>
+                <AltShortSensorName></AltShortSensorName>
+                <Caption></Caption>
+                <Handle>MaxOption</Handle>
+                <HelpContext>0</HelpContext>
+                <TypeTag>0</TypeTag>
+                <ValidOutPuts></ValidOutPuts>
+                <Value>0</Value>
+                <Units></Units>
+                <UnitsIndex>0</UnitsIndex>
+                <ActiveUnits></ActiveUnits>
+                <Enabled>True</Enabled>
+                <UserHidden>False</UserHidden>
+                <ShowInForm>False</ShowInForm>
+                <ShowInGrid>False</ShowInGrid>
+                <Group></Group>
+                <RepsEnabled>False</RepsEnabled>
+              </TImmutableIntegerAttribute>
             </attributes>
           </output>
           <output>
@@ -2209,7 +2298,7 @@
             <ShowInGrid>True</ShowInGrid>
             <Group></Group>
             <RepsEnabled>False</RepsEnabled>
-            <InLocAddr>0</InLocAddr>
+            <InLocAddr>3</InLocAddr>
             <UserEdited>True</UserEdited>
             <Options></Options>
             <OptionsIndex>3</OptionsIndex>
@@ -2700,6 +2789,465 @@
               <string>PA_uS_AVG</string>
             </outputlabels>
             <parentAttributeHandle>Period</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
+        </outputs>
+      </sensor>
+      <sensor>
+        <CanEdit>True</CanEdit>
+        <FileName>sdi-gen.scs</FileName>
+        <FileVersion>4.2</FileVersion>
+        <HelpContext>10825</HelpContext>
+        <HelpFile>scwin.chm</HelpFile>
+        <ImageFilename>C:\Program Files (x86)\Campbellsci\SCWin\Images\sdi-12.jpg</ImageFilename>
+        <LongName>Generic Measurements\SDI-12 Sensor</LongName>
+        <ShortCutVersion>3.2</ShortCutVersion>
+        <ShortName>SDI-12</ShortName>
+        <WireColorEditable>True</WireColorEditable>
+        <AllowWireMove>True</AllowWireMove>
+        <Category>0</Category>
+        <ConnectedToID>10960</ConnectedToID>
+        <Duplicate>False</Duplicate>
+        <Exclusive>False</Exclusive>
+        <MuxFile></MuxFile>
+        <MuxToLogger>False</MuxToLogger>
+        <ParentSensorID>-1</ParentSensorID>
+        <Reps>0</Reps>
+        <SensorID>7</SensorID>
+        <SpanCards>True</SpanCards>
+        <UserRepsEnabled>True</UserRepsEnabled>
+        <SyncVariableSuffixes>False</SyncVariableSuffixes>
+        <TabName>SDI-12</TabName>
+        <attributes>
+          <TStringAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>SDI-12 Address (0-9, A-Z, or a-z)</Caption>
+            <Handle>Address</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>0</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>0</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CharCount>1</CharCount>
+          </TStringAttribute>
+          <TComboAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Number of Result Values (1-9)</Caption>
+            <Handle>Num</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>2</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>0</InLocAddr>
+            <UserEdited>True</UserEdited>
+            <Options>1,2,3,4,5,6,7,8,9</Options>
+            <OptionsIndex>2</OptionsIndex>
+          </TComboAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>First Result: </Caption>
+            <Handle>Param1</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res1</Value>
+            <Units>@m</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>m</ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>9</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Second Result: </Caption>
+            <Handle>Param2</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res2</Value>
+            <Units>@degC</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>degC</ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>10</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Third Result: </Caption>
+            <Handle>Param3</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res3</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>11</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Fourth Result: </Caption>
+            <Handle>Param4</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res4</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>12</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Fifth Result: </Caption>
+            <Handle>Param5</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res5</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>13</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Sixth Result: </Caption>
+            <Handle>Param6</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res6</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>14</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Seventh Result: </Caption>
+            <Handle>Param7</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res7</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>15</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Eighth Result: </Caption>
+            <Handle>Param8</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res8</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>16</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TVariableAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>Ninth Result: </Caption>
+            <Handle>Param9</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts>sample,average,stddev,maximum,minimum,total,windvector</ValidOutPuts>
+            <Value>Res9</Value>
+            <Units>@unit</Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits>unit</ActiveUnits>
+            <Enabled>False</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>17</InLocAddr>
+            <UserEdited>False</UserEdited>
+            <CRBasicDataType>dtFloat</CRBasicDataType>
+            <DataLength>0</DataLength>
+            <isPublic>True</isPublic>
+          </TVariableAttribute>
+          <TComboAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>SDI-12 Command</Caption>
+            <Handle>Command</Handle>
+            <HelpContext>10825</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>aM!</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>True</ShowInForm>
+            <ShowInGrid>True</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+            <InLocAddr>0</InLocAddr>
+            <UserEdited>True</UserEdited>
+            <Options>aM!,aM1!,aM2!,aM3!,aM4!,aM5!,aM6!,aM7!,aM8!,aM9!</Options>
+            <OptionsIndex>1</OptionsIndex>
+          </TComboAttribute>
+          <TAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>G</Caption>
+            <Handle>gnd1</Handle>
+            <HelpContext>0</HelpContext>
+            <TypeTag>1</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>1</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>False</ShowInForm>
+            <ShowInGrid>False</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+          </TAttribute>
+          <TAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>G</Caption>
+            <Handle>gnd2</Handle>
+            <HelpContext>0</HelpContext>
+            <TypeTag>1</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>1</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>False</ShowInForm>
+            <ShowInGrid>False</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+          </TAttribute>
+          <TAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>12V</Caption>
+            <Handle>Power</Handle>
+            <HelpContext>0</HelpContext>
+            <TypeTag>1</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>1</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>False</ShowInForm>
+            <ShowInGrid>False</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+          </TAttribute>
+          <TAttribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>SDI-12</Caption>
+            <Handle>Data</Handle>
+            <HelpContext>0</HelpContext>
+            <TypeTag>1</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>2</Value>
+            <Units></Units>
+            <UnitsIndex>1</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>False</ShowInForm>
+            <ShowInGrid>False</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+          </TAttribute>
+          <TStar4Attribute>
+            <AltLongSensorName></AltLongSensorName>
+            <AltShortSensorName></AltShortSensorName>
+            <Caption>SDI_Address</Caption>
+            <Handle>star4_1</Handle>
+            <HelpContext>0</HelpContext>
+            <TypeTag>0</TypeTag>
+            <ValidOutPuts></ValidOutPuts>
+            <Value>1</Value>
+            <Units></Units>
+            <UnitsIndex>0</UnitsIndex>
+            <ActiveUnits></ActiveUnits>
+            <Enabled>True</Enabled>
+            <UserHidden>False</UserHidden>
+            <ShowInForm>False</ShowInForm>
+            <ShowInGrid>False</ShowInGrid>
+            <Group></Group>
+            <RepsEnabled>False</RepsEnabled>
+          </TStar4Attribute>
+        </attributes>
+        <outputs>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>average.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50100</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Average</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>Average</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>Res1</Measurement>
+            <OutputID>11</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>Res1_AVG</string>
+            </outputlabels>
+            <parentAttributeHandle>Param1</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>average.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50100</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Average</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>Average</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>Res2</Measurement>
+            <OutputID>12</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>Res2_AVG</string>
+            </outputlabels>
+            <parentAttributeHandle>Param2</parentAttributeHandle>
             <ParentSensorID>0</ParentSensorID>
             <Resolution>45</Resolution>
             <FSLabelChanged>False</FSLabelChanged>
