@@ -1,0 +1,1051 @@
+'CR1000
+'University of British Columbia
+'Department of Geography / KNOX
+'Datalogger Program for CR 1000 - Delta Salt Marsh at North Mud Bay EC tower
+'May 2021
+
+'20210509 NL; First iteration
+'20210518 TYL; Bug fixes
+'20210518 NL; Add total PAR from BF5 and add CC5MPX camera
+'20210528 NL; Add second Ts profile
+'20210819 TYL; Add system diagose vars in Biomet table
+'20210910 TYL; modify PPFD/PPFDD/PPFDR. Add "WD_avg/WS_avg" in Biomet table. Increase Scan time. Move SYS diagnostic to RAW table.
+'20211008 Zoran: Added InstructionTimes. Grouped some AM25T calls. Removed some _50Hz and _60Hz
+'20221012 TYL: Modified RAW_CNR4 array (add 5th variable for LWo)
+'20230309 TYL: Modified Flaf(2): Modem_OFF -> PhenoCam_OFF
+
+'##############################
+'#  Delta Salt Marsh EC TOWER #
+'##############################
+'
+'Output Tables
+'MET : Slow meteorological sensors (physical values)
+'RAW : Slow meteorological sensors (raw values)
+'Biomet: For Smartflux to intergrate biomet data into .ghg (physical values)
+'
+'MET already includes physical values after calibrations and data checks. RAW is a backup
+'of the measured voltages without any processing.
+'
+
+'##################
+'# CR1000 Wiring  #
+'##################
+'-------------------------DATALOGGER PANEL--------------------------
+' 1H  - [yel] to AM25T HI (SN: 10375)
+' 1L  - [brn] to AM25T LO
+' G   - [wht] Young 05103 (WD ref) (SN: 182462)
+' 2H  - [grn] Young 05103 (WD Sig) 
+' 2L  - [wht] CNR4 thermistor signal
+' G   - [blk] CNR4 thermistor signal reference & [clr] CNR4 thermistor shield
+' 3H  - 
+' 3L  - 
+' G   - 
+' 4H  - [blk] HMP60 (50cm) T sig (SN: S3530641)
+' 4L  - [wht] HMP60 (50cm) RH sig
+' G   - [blu, shield] HMP60 Gnd
+' VX3 - [org] to AM25T EX
+' AG  - [wht] to AM25T AG
+' P1  - [red] Young 05103 (WS Sig)
+' AG  - [Blk/Clr] Young 05103 (Gnd)
+' P2  - [blk] Rain Tipping Bucket (SN: 85592-0121)
+' AG  - [wht] Rain Tipping Bucket
+'-------------------------------------------------------------------
+' 5H  - [yel] HMP155 (2m) T sig (SN: N4520546)
+' 5L  - [blu] HMP155 (2m) RH sig
+' G   - [wht, blk, clr] (2m) HMP155 Gnd
+' 6H, 11SE - [blu] CS106 (BP sig) (SN: T1110868)
+' 6L  -
+' G   - [yel,blk] CS106 (BP ref)
+' 7H  - [wht] BF5 total par signal (SN: 112/01)
+' 7L  - jumper to 8L
+' AG  - 
+' 8H  - [brw] BF5 diffuse par signal (SN: 112/01)
+' 8L  - [grn] BF5 diffuse par ref
+' AG  -
+' VX2 - [red] CNR4 thermistor voltage excitation
+' AG  -
+' VX1 - [blu] Young 05103 (WD Exc)
+'-------------------------------------------------------------------
+' G   - 
+' 5V  - [grn] CS106 (BP trg)
+' G   - 
+' SW12V - [red] control for relay to cycle Licor power 
+' G   - 
+' 12V - [red] relay power / CS106 (BP pwr) /  HMP60 power (50cm)
+' 12V - [red] BF5 heater / [pink] BF5 / [red] AM25T / [red] Eureka
+'       [red] HMP155 (2m) / [red] 2*NDVI & 2*PRI
+' G   - [gry & blu] BF5 gnd / [shield] CS106 gnd / [blk] AM25T Gnd
+' C1  - {SDM Data} [wht] relay
+' C2  - {SDM Clock} [blk] relay
+' C3  - [SDM Enable} [grn] relay
+' C4  - [blu] to AM25T CLK
+' G   - 
+' C5  - [wht] SDI-12 Data for Eureka Manta +20
+' C6  - 
+' C7  - [wht] 2*NDVI (In: 1069; Out: 1153)
+'		[wht] 2*PRI (In: 1266903761; Out:1503103779)	
+' C8  - [grn] to AM25T RES
+' G   - [blk] 2*NDVI & [blk] 2*PRI
+'-------------------------------------------------------------------
+
+'##################
+'# AM25T Wiring  #
+'##################
+'-------------------------MULTIPLEXER PANEL--------------------------
+' +12 - [red] to datalogger 12 V
+' G   - [blk] to datalogger GND
+' CLK - [blu] to datalogger C7
+' RES - [grn] to datalogger C8
+' EX  - [org] to datalogger VX3
+' AG  - [wht] to datalogger AG
+' HI  - [yel] to datalogger 1H
+' LO  - [brw] to datalogger 1L
+' 1H  - [red] CNR-4 Net Radiometer (CM3 in +) (SN: 171561)
+' 1L  - [blu] CNR-4 Net Radiometer (CM3 in -)
+' G   -
+' 2H  - [wht] CNR-4 Net Radiometer (CM3 out +)
+' 2L  - [blk] CNR-4 Net Radiometer (CM3 out -)
+' G   -
+' 3H  - [gry] CNR-4 Net Radiometer (CG3 in +)
+' 3L  - [yel] CNR-4 Net Radiometer (CG3 in -)
+' G   -
+' 4H  - 
+' 4L  - 
+' G   - 
+' 5H  - [brw] CNR-4 Net Radiometer (CG3 out +)
+' 5L  - [grn] CNR-4 Net Radiometer (CG3 out +)
+' G   - [clr] CNR-4 Shield
+' 6H  - [red] PAR Sensor out (SN: Q34487)
+' 6L  - [blk] PAR Sensor out
+' G   - 
+' 7H  - [wht] Soil HFP 1 (SN: 18746)
+' 7L  - [grn] Soil HFP 1 
+' G   -
+' 8H  - [wht] Soil HFP 2 (SN: 18747)
+' 8L  - [grn] Soil HFP 2 
+' G   -
+' 9H  - [wht] Soil HFP 3 (SN: 18748)
+' 9L  - [grn] Soil HFP 3 
+' G   -
+' 10H  - [blu] MET_SoilT_P1_5cm
+' 10L  - [red] MET_SoilT_P1_5cm
+' G    -
+' 11H  - [blu] MET_SoilT_P1_10cm
+' 11L  - [red] MET_SoilT_P1_10cm
+' G    -
+' 12H  - [blu] MET_SoilT_P1_20cm
+' 12L  - [red] MET_SoilT_P1_20cm
+' G    -
+' 13H  - [blu] MET_SoilT_P1_50cm
+' 13L  - [red] MET_SoilT_P1_50cm
+' G    -
+' 14H  - [blu] MET_SoilT_P2_5cm
+' 14L  - [red] MET_SoilT_P2_5cm
+' G    -
+' 15H  - [blu] MET_SoilT_P2_10cm
+' 15L  - [red] MET_SoilT_P2_10cm
+' G    -
+' 16H  - [blu] MET_SoilT_P3_20cm
+' 16L  - [red] MET_SoilT_P3_20cm
+' G    -
+' 17H  - [blu] MET_SoilT_P4_50cm
+' 17L  - [red] MET_SoilT_P4_50cm
+' G    -
+' 18H  - [red] PAR Sensor in (SN: 202108)
+' 18L  - [blu] PAR Sensor in
+' G    -
+' 19H  -
+' 19L  -
+' G    -
+' 20H  -
+' 20L  -
+' G    -
+' 21H  -
+' 21L  -
+' G    -
+' 22H  - [blu] SYS_chargerTC 
+' 22L  - [red] SYS_chargerTC
+' G    -
+' 23H  - [blu] SYS_BatteryBoxTC 
+' 23L  - [red] SYS_BatteryBoxTC
+' G    -
+' 24H  - [red] Power Box Battery Current High (MAX 2.5V) (SYS_Batt_DCCurrent)
+' 24L  - [blk] Power Box Battery Current Low (GND)
+' G    -
+' 25H  - [red] Power Box Batt Volt (SYS_PBox_Batt_Volt)
+' 25L  - [blk] Power Box Batt Volt (Gnd)
+
+'-------------------------------------------------------------------
+
+SequentialMode
+
+StationName(DSM) 'Delta Salt Marsh
+
+'########################################
+'# Define constants                     #
+'########################################
+
+'Measurement Rate
+'Const SYS_SLOW_SCAN_INTERVAL = 10     'slow sensors in seconds
+
+'Output Period
+Const SYS_OUTPUT = 30                 'Output of slow meteorological sensors in minutes
+
+
+'########################################
+'#  NEED TO UPDATE!                     #
+'########################################
+'Sensor calibrations
+Const CALIB_CNR4_SWi           =  87.566        'Sensor sensitivity (W m^-2)/mV for CNR-4 171561 incoming SW (05.21.2021)
+Const CALIB_CNR4_SWo           =  84.104        'Sensor sensitivity (W m^-2)/mV for CNR-4 171561 incoming SW (05.21.2021)
+Const CALIB_CNR4_LWi           =  92.593        'Sensor sensitivity (W m^-2)/mV for CNR-4 171561 incoming SW (05.21.2021)
+Const CALIB_CNR4_LWo           =  81.967        'Sensor sensitivity (W m^-2)/mV for CNR-4 171561 incoming SW (05.21.2021)
+Const CALIB_BF5_Tpar           =  1    		    'Sensor sensitivity (micromol m-2 s-1)/mV for BF5 112/01 (2021)
+Const CALIB_BF5_diffuse        =  1     	    'Sensor sensitivity (micromol m-2 s-1)/mV for BF5 112/01 (2021)
+Const CALIB_HFP1in             =  16.0668       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr SHEAT1 (SN:18746)
+Const CALIB_HFP1offset         =  0             'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr SHEAT1
+Const CALIB_HFP2in             =  16.1447       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr SHEAT2 (SN:18747)
+Const CALIB_HFP2offset         =  0             'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr SHEAT2
+Const CALIB_HFP3in             =  15.7183       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr SHEAT3 (SN:18748)
+Const CALIB_HFP3offset         =  0             'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr SHEAT3
+Const CALIB_RAIN               =  0.1           'Tipping bucket mm per tip (SN: 85592-0121)
+Const CALIB_PARin              =  218.8184      'microV micromol-1 m2 s (PAR in, #202108) (4.57 uV / micromol / m2s)
+
+Const CALIB_PARout             =  -303.025      'microV micromol-1 m2 s (PAR out, SN: Q34487)
+Const OFFSET_PARout            =  -1.162  
+
+'########################################
+'#  NEED TO UPDATE!                     #
+'########################################
+
+
+'Natural Constants
+Const SIGMA   = 5.67e-8          'Stefan Boltzmann constant [W/(m^2 K^4)]
+Const R       = 8.3143e-3        'Universal gas constant [(kP m^3)/(K mol)].
+Const K_TO_C  = 273.16           'Conversion from deg C to K
+
+'Program Constants
+Const SDM_PER = 30               'Default SDM clock speed, 30 uSec bit period.
+
+'########################################
+'# Variables for meteorological sensors #
+'########################################
+
+' Flags for relay module (sdm-cd16ac)
+Public Flag(16) As Boolean
+Alias Flag(1) = Logger_OFF  'this is set to OFF on relay board
+Alias Flag(2) = PhenoCam_OFF
+Alias Flag(3) = Li7200_pump_OFF
+Alias Flag(4) = Li7700_OFF
+Alias Flag(5) = Li7550_OFF
+Alias Flag(6) = CSAT_OFF
+Alias Flag(7) = GG
+Alias Flag(8) = HH
+Alias Flag(9) = II
+Alias Flag(10) = JJ
+Alias Flag(11) = KK
+Alias Flag(12) = LL
+Alias Flag(13) = MM
+Alias Flag(14) = NN
+Alias Flag(15) = OO
+Alias Flag(16) = PP
+Public I
+Dim CD16_Output(16)
+
+' Amspec on/off time control
+'Public Amspec_On_Time As Long   ' minutes into day,  5:30 PST
+'Public Amspec_Off_Time As Long ' minutes into day, 20:00 PST
+'Public LeaveAmspecAlone As Boolean ' do not use timed control of AMSPEC power
+'Public LeaveModemAlone As Boolean  ' do not use timed control of Modem power
+'Public minutes As Long
+'Public runAMSPEConThisDay(7) As Boolean ' flags for days of week (1-Sunday)
+'Alias runAMSPEConThisDay(1) = runAMSPEC_on_Sun
+'Alias runAMSPEConThisDay(2) = runAMSPEC_on_Mon
+'Alias runAMSPEConThisDay(3) = runAMSPEC_on_Tue
+'Alias runAMSPEConThisDay(4) = runAMSPEC_on_Wed
+'Alias runAMSPEConThisDay(5) = runAMSPEC_on_Thu
+'Alias runAMSPEConThisDay(6) = runAMSPEC_on_Fri
+'Alias runAMSPEConThisDay(7) = runAMSPEC_on_Sat
+
+'Dim countDays As Long                    ' counter
+
+'Net Radiometer (CNR-4) ----------------------------------------------------------------------------
+Public RAW_CNR4(5)
+Alias RAW_CNR4(1) = RAW_CNR4_SWi
+Alias RAW_CNR4(2) = RAW_CNR4_SWo
+Alias RAW_CNR4(3) = RAW_CNR4_LWi
+Alias RAW_CNR4(5) = RAW_CNR4_LWo
+Units  RAW_CNR4_SWi = mV
+Units  RAW_CNR4_SWo = mV
+Units  RAW_CNR4_LWi = mV
+Units  RAW_CNR4_LWo = mV
+
+Public MET_CNR4_SWi
+Public MET_CNR4_SWo
+Public MET_CNR4_LWi
+Public MET_CNR4_LWo
+Public MET_CNR4_TC
+Public MET_CNR4_TK
+Public MET_CNR4_Net
+Public MET_CNR4_Alb
+Units  MET_CNR4_SWi = W/m2
+Units  MET_CNR4_SWo = W/m2
+Units  MET_CNR4_LWi = W/m2
+Units  MET_CNR4_LWo = W/m2
+Units  MET_CNR4_TC  = Deg C
+Units  MET_CNR4_TK  = k
+Units  MET_CNR4_Net = W/m2
+Units  MET_CNR4_Alb = unitless
+
+'Air Tempeature and Humidity (HMP 60) --------------------------------------------------------------
+
+Public MET_HMP_T_350cm
+Public MET_HMP_RH_350cm
+Units  MET_HMP_T_350cm  = Deg C
+Units  MET_HMP_RH_350cm = %
+
+'Air Tempeature and Humidity (HMP 155) --------------------------------------------------------------
+
+Public MET_HMP_T_2m
+Public MET_HMP_RH_2m
+Units  MET_HMP_T_2m  = Deg C
+Units  MET_HMP_RH_2m = %
+
+'Wind Speed and Direction (Young Wind Sentry) ------------------------------------------------------
+
+'Public RAW_Young_WS
+'Public RAW_Young_WD
+'Units  RAW_Young_WS = Pulses
+'Units  RAW_Young_WD = mV
+
+Public MET_Young_WS
+Public MET_Young_WD
+Units  MET_Young_WS = m/s
+Units  MET_Young_WD = Deg
+
+'Soil Temperatures (Type T Thermocouples) ----------------------------------------------------------
+Public MET_SoilT(8)
+
+'P1 stands for profile 1
+Alias MET_SoilT(1) = MET_SoilT_P1_5cm
+Alias MET_SoilT(2) =  MET_SoilT_P1_10cm
+Alias MET_SoilT(3) = MET_SoilT_P1_20cm
+Alias MET_SoilT(4) = MET_SoilT_P1_50cm 
+
+Units MET_SoilT_P1_5cm      = Deg C
+Units MET_SoilT_P1_10cm     = Deg C
+Units MET_SoilT_P1_20cm     = Deg C
+Units MET_SoilT_P1_50cm     = Deg C
+
+'P2 stands for profile 2
+Alias MET_SoilT(5) = MET_SoilT_P2_5cm
+Alias MET_SoilT(6) = MET_SoilT_P2_10cm
+Alias MET_SoilT(7) = MET_SoilT_P2_20cm
+Alias MET_SoilT(8) = MET_SoilT_P2_50cm
+
+Units  MET_SoilT_P2_5cm     = Deg C
+Units MET_SoilT_P2_10cm     = Deg C
+Units MET_SoilT_P2_20cm     = Deg C
+Units MET_SoilT_P2_50cm     = Deg C
+
+
+'Water Measurements (Eureka Manta +20) ----------------------------------------------------------------
+Public MProbe(7)
+Alias MProbe(1)=MET_WaterT
+Alias MProbe(2)=MET_WaterpH
+Alias MProbe(3)=MET_WaterLevel
+Alias MProbe(4)=MET_WaterORP
+Alias MProbe(5)=MET_WaterCond
+Alias MProbe(6)=MET_WaterDO_perc
+Alias MProbe(7)=MET_WaterDO
+
+Units MET_WaterT=deg C
+Units MET_WaterpH = unitless
+Units MET_WaterCond=microS/cm
+Units MET_WaterDO_perc=% saturation
+Units MET_WaterDO=mg/l
+Units MET_WaterORP=mV
+Units MET_WaterLevel=m
+
+'Soil Heat Flux Plates -----------------------------------------------------------------------------
+
+Public MET_SHFP_1
+Units  MET_SHFP_1 = W/m2
+Public MET_SHFP_2
+Units  MET_SHFP_2 = W/m2
+Public MET_SHFP_3
+Units  MET_SHFP_3 = W/m2
+
+Public RAW_SHFP(3)
+Alias  RAW_SHFP(1)= RAW_SHFP_1
+Units  RAW_SHFP_1 = mV
+Alias  RAW_SHFP(2)= RAW_SHFP_2
+Units  RAW_SHFP_2 = mV
+Alias  RAW_SHFP(3)= RAW_SHFP_3
+Units  RAW_SHFP_3 = mV
+
+'Rain Gauge ----------------------------------------------------------------------------------------
+
+Public MET_RainTips
+Units  MET_RainTips = MM
+Public RAW_RainTips
+Units  RAW_RainTips = Pulses
+
+'PAR-----------------------------------------------------------------------------------------------
+
+Public MET_PARin
+Units  MET_PARin = micromol/(m2s)
+Public RAW_PARin
+Units  RAW_PARin = mV
+Public MET_PARout
+Units  MET_PARout = micromol/(m2s)
+Public RAW_PARout
+Units  RAW_PARout = mV
+
+'Remote sensing indices----------------------------------------------------------------------------
+
+'NDVI
+Public MET_NDVIin(3)
+Public MET_NDVIout(3)
+Public MET_NDVI
+Alias MET_NDVIin(1) = MET_REDin
+Alias MET_NDVIout(1) = MET_REDout
+Alias MET_NDVIin(2) = MET_NIRin
+Alias MET_NDVIout(2) = MET_NIRout
+Alias MET_NDVIin(3) = MET_NDVIi_ind
+Alias MET_NDVIout(3) = MET_NDVIo_ind
+
+Units MET_REDin = W/m^2 nm
+Units MET_REDout = W/m^2 nm sr
+Units MET_NIRin = W/m^2 nm
+Units MET_NIRout = W/m^2 nm sr
+Units MET_NDVI = unitless
+
+'PRI
+Public MET_PRIin(3)
+Public MET_PRIout(3)
+Public MET_PRI
+Alias MET_PRIin(1) = MET_532in
+Alias MET_PRIout(1) = MET_532out
+Alias MET_PRIin(2) = MET_570in
+Alias MET_PRIout(2) = MET_570out
+Alias MET_PRIin(3) = MET_PRIi_ind
+Alias MET_PRIout(3) = MET_PRIo_ind
+
+Units MET_532in = W/m^2 nm
+Units MET_532out = W/m^2 nm sr
+Units MET_570in = W/m^2 nm
+Units MET_570out = W/m^2 nm sr
+Units MET_PRI = unitless
+
+' Barometric Pressure  ----------------------------------------------------------------------------
+Public MET_Barom_Press_mB
+Units MET_Barom_Press_mB = mB
+Public MET_Barom_Press_kPa
+Units MET_Barom_Press_kPa = kPa
+
+' Delta BF5 solar sensor  -------------------------------------------------------------------------
+'Total PAR
+Public RAW_BF5_Tpar
+Units RAW_BF5_Tpar = mV
+Public MET_BF5_Tpar
+Units MET_BF5_Tpar = micromol/(m2s)
+
+'Diffuse PAR
+Public RAW_BF5_diffuse
+Units RAW_BF5_diffuse = mV
+Public MET_BF5_diffuse
+Units MET_BF5_diffuse = micromol/(m2s)
+
+'Datalogger and System Status ----------------------------------------------------------------------
+
+Public SYS_CR1000_Batt_Volt
+Units  SYS_CR1000_Batt_Volt  = V
+Public SYS_PanelT_CR1000
+Units  SYS_PanelT_CR1000     = Deg C
+Public SYS_PanelT_AM25T_loop
+Units  SYS_PanelT_AM25T_loop = Deg C
+Public SYS_PanelT_AM25T
+Units  SYS_PanelT_AM25T      = Deg C
+'Public SYS_RealTime(9)
+'Alias SYS_RealTime(1) = SYS_Year
+'Alias SYS_RealTime(2) = SYS_Month
+'Alias SYS_RealTime(3) = SYS_Day
+'Alias SYS_RealTime(4) = SYS_Hour
+'Alias SYS_RealTime(5) = SYS_Minute
+'Alias SYS_RealTime(6) = SYS_Second
+'Alias SYS_RealTime(7) = SYS_Microsecond
+'Alias SYS_RealTime(8) = SYS_DayOfWeek
+'Alias SYS_RealTime(9) = SYS_DayOfYear
+
+Public SYS_Batt_DCCurrent
+Units  SYS_Batt_DCCurrent   = A
+Public SYS_PBox_Batt_Volt
+Units  SYS_PBox_Batt_Volt   = V
+
+Public SYS_TypeT_TC(2)
+Alias SYS_TypeT_TC(1) = SYS_chargerTC            'Reference thermocouple for charger space
+Units  SYS_chargerTC    = Deg C
+Alias SYS_TypeT_TC(2) = SYS_BatteryBoxTC         'Reference thermocouple for battery box
+Units  SYS_BatteryBoxTC = Deg C
+
+
+Public SYS_WatchdogErrors 'RICK - CAN YOU DEFINE THESE?
+Public SYS_SkippedRecords 'RICK - CAN YOU DEFINE THESE?
+Public SYS_ProcessTime 'RICK - CAN YOU DEFINE THESE?
+Public SYS_MaxProcessTime 'RICK - CAN YOU DEFINE THESE?
+
+'Convert variable names for SmartFlux use ---------------------------------------------------------------
+Public SWIN_6_10_1_1_1
+Public SWOUT_6_11_1_1_1
+Public LWIN_6_14_1_1_1
+Public LWOUT_6_15_1_1_1
+Public Tc_2_99_1_1_1
+Public RN_6_5_1_1_1
+Public ALB_99_26_1_1_1
+Public TA_2_1_1_1_1
+Public RH_19_3_1_1_1
+Public TA_2_1_1_2_1
+Public RH_19_3_1_2_1
+Public WS_16_33_1_1_1
+Public WD_20_35_1_1_1
+Public TS_2_38_1_1_1
+Public TS_2_38_1_2_1
+Public TS_2_38_1_3_1
+Public TS_2_38_1_4_1
+Public TS_2_38_2_1_1
+Public TS_2_38_2_2_1
+Public TS_2_38_2_3_1
+Public TS_2_38_2_4_1
+Public SHF_6_37_1_1_1
+Public SHF_6_37_2_1_1
+Public SHF_6_37_3_1_1
+Public P_8_18_1_1_1
+Public PA_4_2_1_1_1
+
+Public PPFD_7_21_1_1_1
+Public PPFD_7_21_2_1_1
+Public PPFDR_7_23_1_1_1
+Public PPFDD_7_22_1_1_1
+
+
+Public TW_2_45_1_1_1 
+Public pH_99_99_1_1_1
+Public COND_99_99_1_1_1
+Public DOperc_99_99_1_1_1
+Public DO_99_99_1_1_1
+Public ORP_99_99_1_1_1
+Public WL_10_44_1_1_1
+
+Public REDin_99_99_1_1_1
+Public REDout_99_99_1_1_1
+Public NIRin_99_99_1_1_1
+Public NIRout_99_99_1_1_1
+Public NDVI_99_43_1_1_1
+Public nm532in_99_99_1_1_1
+Public nm532out_99_99_1_1_1
+Public nm570in_99_99_1_1_1
+Public nm570out_99_99_1_1_1
+Public PRI_99_27_1_1_1
+
+'system dignose
+Public SysCR1000BV_99_99_1_1_1
+Public SysPTCR1000_99_99_1_1_1 'PanelT
+Public SysPTAM25Tloop_99_99_1_1_1
+Public SysPTAM25T_99_99_1_1_1
+Public SysBattDCC_99_99_1_1_1 'Battery DC current
+Public SysPBoxBattVolt_99_99_1_1_1
+Public SysChargerTC_99_99_1_1_1
+Public SysBatteryBoxTC_99_99_1_1_1
+
+
+Units  SWIN_6_10_1_1_1 = W/m2
+Units  SWOUT_6_11_1_1_1 = W/m2
+Units  LWIN_6_14_1_1_1 = W/m2
+Units  LWOUT_6_15_1_1_1 = W/m2
+Units  Tc_2_99_1_1_1  = Deg C
+Units  RN_6_5_1_1_1 = W/m2
+Units  ALB_99_26_1_1_1 = unitless
+Units  WS_16_33_1_1_1 = m/s
+Units  WD_20_35_1_1_1 = Deg
+Units  TA_2_1_1_1_1  = Deg C
+Units  RH_19_3_1_1_1 = %
+Units  TA_2_1_1_2_1  = Deg C
+Units  RH_19_3_1_2_1 = %
+Units  TS_2_38_1_1_1  = Deg C
+Units  TS_2_38_1_2_1  = Deg C
+Units  TS_2_38_1_3_1  = Deg C
+Units  TS_2_38_1_4_1  = Deg C
+Units  TS_2_38_2_1_1  = Deg C
+Units  TS_2_38_2_2_1  = Deg C
+Units  TS_2_38_2_3_1  = Deg C
+Units  TS_2_38_2_4_1  = Deg C
+Units  SHF_6_37_1_1_1 = W/m2
+Units  SHF_6_37_2_1_1 = W/m2
+Units  SHF_6_37_3_1_1 = W/m2
+Units  P_8_18_1_1_1 = MM
+Units  PA_4_2_1_1_1 = kPa
+
+Units  PPFD_7_21_1_1_1 = micromol/(m2s)
+Units  PPFD_7_21_2_1_1 = micromol/(m2s)
+Units  PPFDR_7_23_1_1_1 = micromol/(m2s)
+Units  PPFDD_7_22_1_1_1 = micromol/(m2s)
+
+Units TW_2_45_1_1_1      = deg C
+Units pH_99_99_1_1_1     = unitless
+Units COND_99_99_1_1_1   = microS/cm
+Units DOperc_99_99_1_1_1= % saturation
+Units DO_99_99_1_1_1     = mg/l
+Units ORP_99_99_1_1_1    = mV
+Units WL_10_44_1_1_1     = m
+
+Units REDin_99_99_1_1_1    = W/m^2 nm
+Units REDout_99_99_1_1_1   = W/m^2 nm sr
+Units NIRin_99_99_1_1_1    = W/m^2 nm
+Units NIRout_99_99_1_1_1   = W/m^2 nm sr
+Units NDVI_99_43_1_1_1     = unitless
+Units nm532in_99_99_1_1_1  = W/m^2 nm
+Units nm532out_99_99_1_1_1 = W/m^2 nm sr
+Units nm570in_99_99_1_1_1  = W/m^2 nm
+Units nm570out_99_99_1_1_1 = W/m^2 nm sr
+Units PRI_99_27_1_1_1      = unitless
+
+'system dignose
+Units SysCR1000BV_99_99_1_1_1     = V
+Units SysPTCR1000_99_99_1_1_1     = Deg C
+Units SysPTAM25Tloop_99_99_1_1_1  = Deg C
+Units SysPTAM25T_99_99_1_1_1      = Deg C
+Units SysBattDCC_99_99_1_1_1      = A
+Units SysPBoxBattVolt_99_99_1_1_1 = V
+Units SysChargerTC_99_99_1_1_1    = Deg C
+Units SysBatteryBoxTC_99_99_1_1_1 = Deg C
+
+
+Public ITimes(1200) As Long   
+InstructionTimes(ITimes())
+
+'########################################
+'# Final ouput tables                   #
+'########################################
+
+DataTable(MET,true,-1)
+
+  DataInterval(0,SYS_OUTPUT,Min,0)
+  CardOut(0,-1)
+
+  Average(1,MET_Barom_Press_kPa,IEEE4,False)
+  Average(1,MET_HMP_T_2m,IEEE4,False)
+  Average(1,MET_HMP_RH_2m,IEEE4,False)
+  Average(1,MET_HMP_T_350cm,IEEE4,False)
+  Average(1,MET_HMP_RH_350cm,IEEE4,False)
+  Average(1,MET_CNR4_SWi,IEEE4,False)
+  Average(1,MET_CNR4_SWo,IEEE4,False)
+  Average(1,MET_CNR4_LWi,IEEE4,False)
+  Average(1,MET_CNR4_LWo,IEEE4,False)
+  Average(1,MET_CNR4_Net,IEEE4,False)
+  Average(1,MET_CNR4_Alb,IEEE4,False)
+  Average(1,MET_CNR4_TC,IEEE4,False)
+  Average(1,MET_PARin,IEEE4,False)
+  Average(1,MET_PARout,IEEE4,False)
+  WindVector(1,MET_Young_WS,MET_Young_WD,IEEE4,False,0,0,0)
+  Average(1,MET_SHFP_1,IEEE4,False)
+  Average(1,MET_SHFP_2,IEEE4,False)
+  Average(1,MET_SHFP_3,IEEE4,False)
+  Average(1,MET_SoilT_P1_5cm,IEEE4,False)
+  Average(1,MET_SoilT_P1_10cm,IEEE4,False)
+  Average(1,MET_SoilT_P1_20cm,IEEE4,False)
+  Average(1,MET_SoilT_P1_50cm,IEEE4,False)
+  Average(1,MET_SoilT_P2_5cm,IEEE4,False)
+  Average(1,MET_SoilT_P2_10cm,IEEE4,False)
+  Average(1,MET_SoilT_P2_20cm,IEEE4,False)
+  Average(1,MET_SoilT_P2_50cm,IEEE4,False)
+  Totalize(1,MET_RainTips,IEEE4,False)
+  Average(1,MET_WaterLevel,IEEE4,False)
+  Average(1,MET_WaterT,IEEE4,False)
+  Average(1,MET_WaterpH,IEEE4,False)
+  Average(1,MET_WaterORP,IEEE4,False)
+  Average(1,MET_WaterCond,IEEE4,False)
+  Average(1,MET_WaterDO_perc,IEEE4,False)
+  Average(1,MET_WaterDO,IEEE4,False)
+  Average(1,MET_BF5_diffuse,IEEE4,False)
+  Average(1,MET_BF5_Tpar,IEEE4,False)
+  Average(1,MET_REDin,IEEE4,False)
+  Average(1,MET_REDout,IEEE4,False)
+  Average(1,MET_NIRin,IEEE4,False)
+  Average(1,MET_NIRout,IEEE4,False)
+  Average(1,MET_NDVI,IEEE4,False)
+  Average(1,MET_532in,IEEE4,False)
+  Average(1,MET_532out,IEEE4,False)
+  Average(1,MET_570in,IEEE4,False)
+  Average(1,MET_570out,IEEE4,False)
+  Average(1,MET_PRI,IEEE4,False)
+  Maximum(1,MET_Young_WS,IEEE4,False,False) 
+  Maximum(1,MET_Young_WD,IEEE4,False,False)
+  Minimum(1,MET_Young_WS,IEEE4,False,False) 
+  Minimum(1,MET_Young_WD,IEEE4,False,False) 
+  Average(1,SYS_chargerTC,IEEE4,False)
+  Average(1,SYS_BatteryBoxTC,IEEE4,False)
+  Average(1,SYS_CR1000_Batt_Volt,IEEE4,False)
+  Average(1,SYS_Batt_DCCurrent,IEEE4,False)
+  Average(1,SYS_PanelT_CR1000,IEEE4,False)
+  Average(1,SYS_PanelT_AM25T,IEEE4,False)
+  Average(1,SYS_PBox_Batt_Volt,IEEE4,False)
+  
+  Maximum(1,SYS_Batt_DCCurrent,IEEE4,False,False)
+  Maximum(1,SYS_PBox_Batt_Volt,IEEE4,False,False)
+  Minimum(1,SYS_Batt_DCCurrent,IEEE4,False,False)
+  Minimum(1,SYS_PBox_Batt_Volt,IEEE4,False,False)
+  
+  Maximum(1,SYS_WatchdogErrors,IEEE4,False,False)
+  Maximum(1,SYS_SkippedRecords,IEEE4,False,False)
+  Maximum(1,SYS_ProcessTime,IEEE4,False,False)
+  Maximum(1,SYS_MaxProcessTime,IEEE4,False,False)
+
+EndTable
+
+DataTable(RAW,true,10*60*5)
+
+  DataInterval(0,SYS_OUTPUT,Min,0)
+  CardOut(0,-1)
+
+  Average(1,RAW_CNR4_SWi,IEEE4,False)
+  Average(1,RAW_CNR4_SWo,IEEE4,False)
+  Average(1,RAW_CNR4_LWi,IEEE4,False)
+  Average(1,RAW_CNR4_LWo,IEEE4,False)
+  Average(1,RAW_PARin,IEEE4,False)
+  Average(1,RAW_PARout,IEEE4,False)
+  'Totalize(1,RAW_Young_WS,IEEE4,False)
+  'Average(1,RAW_Young_WD,IEEE4,False)  
+  Totalize(1,RAW_RainTips,IEEE4,False)
+
+  Average(1,RAW_SHFP_1,IEEE4,False)
+  Average(1,RAW_SHFP_2,IEEE4,False)
+  Average(1,RAW_SHFP_3,IEEE4,False)
+  Average(1,RAW_BF5_diffuse,IEEE4,False)
+  Average(1,RAW_BF5_Tpar,IEEE4,False)
+
+  StdDev(1,RAW_CNR4_SWi,IEEE4,False)
+  StdDev(1,RAW_CNR4_SWo,IEEE4,False)
+  StdDev(1,RAW_CNR4_LWi,IEEE4,False)
+  StdDev(1,RAW_CNR4_LWo,IEEE4,False)
+  'StdDev(1,RAW_Young_WD,IEEE4,False)
+  
+
+EndTable
+
+DataTable(Biomet,true,-1)
+
+  DataInterval(0,60,Sec,0)
+  CardOut(0,-1)
+
+  Average(1,PA_4_2_1_1_1,IEEE4,False)
+  Average(1,TA_2_1_1_1_1,IEEE4,False)
+  Average(1,RH_19_3_1_1_1,IEEE4,False)
+  Average(1,TA_2_1_1_2_1,IEEE4,False)
+  Average(1,RH_19_3_1_2_1,IEEE4,False)
+  Average(1,SWIN_6_10_1_1_1,IEEE4,False)
+  Average(1,SWOUT_6_11_1_1_1,IEEE4,False)
+  Average(1,LWIN_6_14_1_1_1,IEEE4,False)
+  Average(1,LWOUT_6_15_1_1_1,IEEE4,False)
+  Average(1,RN_6_5_1_1_1,IEEE4,False)
+  Average(1,ALB_99_26_1_1_1,IEEE4,False)
+  Average(1,Tc_2_99_1_1_1,IEEE4,False)
+  
+  Average(1,PPFD_7_21_1_1_1,IEEE4,False)
+  Average(1,PPFDR_7_23_1_1_1,IEEE4,False)
+  Average(1,PPFD_7_21_2_1_1,IEEE4,False)
+  Average(1,PPFDD_7_22_1_1_1,IEEE4,False)
+  
+  Average(1,WD_20_35_1_1_1,IEEE4,False)
+  Average(1,WS_16_33_1_1_1,IEEE4,False)
+
+  'WindVector(1,WS_16_33_1_1_1,WD_20_35_1_1_1,IEEE4,False,0,0,0)
+  Average(1,SHF_6_37_1_1_1,IEEE4,False)
+  Average(1,SHF_6_37_2_1_1,IEEE4,False)
+  Average(1,SHF_6_37_3_1_1,IEEE4,False)
+  Average(1,TS_2_38_1_1_1,IEEE4,False)
+  Average(1,TS_2_38_1_2_1,IEEE4,False)
+  Average(1,TS_2_38_1_3_1,IEEE4,False)
+  Average(1,TS_2_38_1_4_1,IEEE4,False)
+  Average(1,TS_2_38_2_1_1,IEEE4,False)
+  Average(1,TS_2_38_2_2_1,IEEE4,False)
+  Average(1,TS_2_38_2_3_1,IEEE4,False)
+  Average(1,TS_2_38_2_4_1,IEEE4,False)
+  Totalize(1,P_8_18_1_1_1,IEEE4,False)
+  Average(1,WL_10_44_1_1_1,IEEE4,False)
+  Average(1,TW_2_45_1_1_1 ,IEEE4,False)
+  Average(1,pH_99_99_1_1_1,IEEE4,False)
+  Average(1,ORP_99_99_1_1_1,IEEE4,False)
+  Average(1,COND_99_99_1_1_1,IEEE4,False)
+  Average(1,DOperc_99_99_1_1_1,IEEE4,False)
+  Average(1,DO_99_99_1_1_1,IEEE4,False)
+  Average(1,REDin_99_99_1_1_1,IEEE4,False)
+  Average(1,REDout_99_99_1_1_1,IEEE4,False)
+  Average(1,NIRin_99_99_1_1_1,IEEE4,False)
+  Average(1,NIRout_99_99_1_1_1,IEEE4,False)
+  Average(1,NDVI_99_43_1_1_1,IEEE4,False)
+  Average(1,nm532in_99_99_1_1_1,IEEE4,False)
+  Average(1,nm532out_99_99_1_1_1,IEEE4,False)
+  Average(1,nm570in_99_99_1_1_1,IEEE4,False)
+  Average(1,nm570out_99_99_1_1_1,IEEE4,False)
+  Average(1,PRI_99_27_1_1_1,IEEE4,False)
+  Average(1,SysCR1000BV_99_99_1_1_1,IEEE4,False)
+  Average(1,SysPTCR1000_99_99_1_1_1,IEEE4,False)
+  Average(1,SysPTAM25Tloop_99_99_1_1_1,IEEE4,False)
+  Average(1,SysPTAM25T_99_99_1_1_1,IEEE4,False)
+  Average(1,SysBattDCC_99_99_1_1_1,IEEE4,False)
+  Average(1,SysPBoxBattVolt_99_99_1_1_1,IEEE4,False)
+  Average(1,SysChargerTC_99_99_1_1_1,IEEE4,False)
+  Average(1,SysBatteryBoxTC_99_99_1_1_1,IEEE4,False)
+
+EndTable
+
+'########################################
+'# Program                              #
+'########################################
+
+BeginProg
+  Scan (10,Sec,1,0)
+
+    For I = 1 To 16
+      CD16_Output(I) = Flag(I)
+    Next I
+    SDMCD16AC(CD16_Output(), 1, 0)
+
+    'Battery Voltage
+    Battery (SYS_CR1000_Batt_Volt)
+    SysCR1000BV_99_99_1_1_1=SYS_CR1000_Batt_Volt
+
+    'Wiring Panel Temperature Logger
+      PanelTemp(SYS_PanelT_CR1000,250)
+      AM25T(SYS_PanelT_AM25T,0,mV25,1,1,TypeT,SYS_PanelT_AM25T_loop,4,8,Vx3,False,0,250,1.0,0)
+      SysPTCR1000_99_99_1_1_1=SYS_PanelT_CR1000
+      SysPTAM25T_99_99_1_1_1=SYS_PanelT_AM25T
+      SysPTAM25Tloop_99_99_1_1_1=SYS_PanelT_AM25T_loop
+
+    'CNR4 Net Radiometer
+    'Body Temperature
+      BrHalf(MET_CNR4_TC,1,mV2500,4,2,1,2500,True,0,250,1,0)
+      MET_CNR4_TC=1000*(MET_CNR4_TC/(1-MET_CNR4_TC))
+  	  MET_CNR4_TC=1/(1.0295e-3+2.391e-4*LN(MET_CNR4_TC)+1.568e-7*(LN(MET_CNR4_TC))^3)-273.15
+  	  Tc_2_99_1_1_1 = MET_CNR4_TC
+      MET_CNR4_TK=MET_CNR4_TC+K_TO_C
+
+    'CNR4 Net Radiometer
+    'Short-wave in
+      AM25T (RAW_CNR4(),5,mV25,1,1,-1,SYS_PanelT_AM25T_loop,4,8,0,True,0,250,1.0,0)
+      MET_CNR4_SWi=CALIB_CNR4_SWi*RAW_CNR4_SWi
+	    SWIN_6_10_1_1_1 = MET_CNR4_SWi
+
+    'CNR4 Net Radiometer
+    'Short-wave out
+      MET_CNR4_SWo=CALIB_CNR4_SWo*RAW_CNR4_SWo
+	    SWOUT_6_11_1_1_1 = MET_CNR4_SWo
+
+    'Calculate Albedo
+      MET_CNR4_Alb=MET_CNR4_SWo/MET_CNR4_SWi
+      If MET_CNR4_SWo <= 0 Then MET_CNR4_Alb=NaN
+      If MET_CNR4_SWi <= 0 Then MET_CNR4_Alb=NaN
+      If MET_CNR4_SWi < MET_CNR4_SWo Then MET_CNR4_Alb=NaN
+  	  ALB_99_26_1_1_1 = MET_CNR4_Alb
+
+    'CNR4 Net Radiometer
+    'Long-wave in
+      MET_CNR4_LWi=CALIB_CNR4_LWi*RAW_CNR4_LWi
+      MET_CNR4_LWi=MET_CNR4_LWi+SIGMA*MET_CNR4_TK^4
+	    LWIN_6_14_1_1_1 = MET_CNR4_LWi
+
+    'CNR4 Net Radiometer
+    'Long-wave out
+      MET_CNR4_LWo=CALIB_CNR4_LWo*RAW_CNR4_LWo
+      MET_CNR4_LWo=MET_CNR4_LWo+SIGMA*MET_CNR4_TK^4
+	    LWOUT_6_15_1_1_1 = MET_CNR4_LWo
+	
+    'Calculate Net Radiation
+      MET_CNR4_Net=MET_CNR4_SWi-MET_CNR4_SWo+MET_CNR4_LWi-MET_CNR4_LWo
+  	  RN_6_5_1_1_1 = MET_CNR4_Net
+
+  
+    'RM Young 05103 - Wind Direction
+      BrHalf (MET_Young_WD,1,mV2500,3,Vx1,1,2500,True,20000,250,355,0)
+      If MET_Young_WD >= 360 Then MET_Young_WD = 0
+      If MET_Young_WD <= 0   Then MET_Young_WD = 0
+      WD_20_35_1_1_1 = MET_Young_WD
+
+    'RM Young 05103 - Wind Speed
+      PulseCount(MET_Young_WS,1,1,1,1,0.0980,0)
+      WS_16_33_1_1_1 = MET_Young_WS
+    
+    'BF5 Total PAR
+	    VoltDiff(RAW_BF5_Tpar,1,mV2500,7,True,0,250,1,0)
+	    MET_BF5_Tpar = CALIB_BF5_Tpar * RAW_BF5_Tpar
+	    PPFD_7_21_2_1_1 = MET_BF5_Tpar
+	
+  	'BF5 Diffuse PAR
+  	  VoltDiff(RAW_BF5_diffuse,1,mV2500,8,True,0,250,1,0)
+  	  MET_BF5_diffuse = CALIB_BF5_diffuse * RAW_BF5_diffuse
+  	  PPFDD_7_22_1_1_1 = MET_BF5_diffuse
+	
+  	'########################################
+    '# Sensors need SW12V                   #
+    '########################################
+	
+    'HMP155 (panel switched power) Temperature & Relative Humidity Sensor measurements 'MET_HMP_T_2m' and 'MET_HMP_RH_2m'
+	  'PortSet(9,1)
+	  'Delay(0,5,Sec)
+	  VoltSe(MET_HMP_T_2m,1,mV2500,9,0,0,250,0.14,-80)
+	  VoltSe(MET_HMP_RH_2m,1,mV2500,10,0,0,250,0.1,0)
+	  
+	'METER sensor  
+	'Query sensor for 3 SDI-12 outputs.  Default address for all Decagon Digital sensors is 0.
+	  'NDVI
+	  SDI12Recorder (MET_NDVIin(),7,2,"M!",1.0,0)
+	  SDI12Recorder (MET_NDVIout(),7,3,"M!",1.0,0)
+	  
+	  'PRI
+	  SDI12Recorder (MET_PRIin(),7,4,"M!",1.0,0)
+	  SDI12Recorder (MET_PRIout(),7,5,"M!",1.0,0)
+      
+	  'Turn SW12V off
+	  'PortSet(9,0)
+	  
+	  
+	'Make RH under 100
+	  If (MET_HMP_RH_2m>100) AND (MET_HMP_RH_2m<108) Then MET_HMP_RH_2m=100
+	  TA_2_1_1_1_1 = MET_HMP_T_2m
+	  RH_19_3_1_1_1 = MET_HMP_RH_2m
+	  
+	'calculate NDVI from individual outputs of both sensors.
+	  MET_NDVI = (MET_NIRout/MET_NIRin - MET_REDout/MET_REDin)/(MET_NIRout/MET_NIRin + MET_REDout/MET_REDin)
+	  REDin_99_99_1_1_1 = MET_NDVIin(1)
+	  NIRin_99_99_1_1_1 = MET_NDVIin(2)
+	  REDout_99_99_1_1_1 = MET_NDVIout(1)
+    NIRout_99_99_1_1_1 = MET_NDVIout(2)
+	  NDVI_99_43_1_1_1 = MET_NDVI
+
+	'calculate PRI from individual outputs of both sensors.
+	  MET_PRI = (MET_532out/MET_532in - MET_570out/MET_570in)/(MET_532out/MET_532in + MET_570out/MET_570in)
+	  nm532in_99_99_1_1_1 = MET_PRIin(1)
+	  nm570in_99_99_1_1_1 = MET_PRIin(2)
+	  nm532out_99_99_1_1_1 = MET_PRIout(1)
+    nm570out_99_99_1_1_1 = MET_PRIout(2)
+	  PRI_99_27_1_1_1 = MET_PRI
+
+	'########################################
+    '# Sensors need SW12V                   #
+    '########################################
+	
+	  'HMP60 Temperature & Relative Humidity Sensor measurements 'MET_HMP_T_350cm' and 'MET_HMP_RH_350cm'
+	  VoltSe(MET_HMP_T_350cm,1,mV2500,7,0,0,250,0.1,-40)
+	  VoltSe(MET_HMP_RH_350cm,1,mV2500,8,0,0,250,0.1,0)
+	  If (MET_HMP_RH_350cm>100) AND (MET_HMP_RH_350cm<108) Then MET_HMP_RH_350cm=100
+	  TA_2_1_1_2_1 = MET_HMP_T_350cm
+	  RH_19_3_1_2_1 = MET_HMP_RH_350cm
+
+	
+    'Water Measurements Multiprobe (Eureka Manta +20)
+	  If TimeIntoInterval(25,30,Min) Then
+	  SDI12Recorder(MProbe(),5,1,"M!",1,0,-1)
+	  TW_2_45_1_1_1 = MProbe(1)    
+	  pH_99_99_1_1_1 = MProbe(2)
+	  WL_10_44_1_1_1 = MProbe(3)
+	  ORP_99_99_1_1_1 = MProbe(4)
+	  COND_99_99_1_1_1 = MProbe(5)
+	  DOperc_99_99_1_1_1 = MProbe(6)
+	  DO_99_99_1_1_1 = MProbe(7)
+	  EndIf
+
+    'Precipitation Tipping Bucket
+      PulseCount(RAW_RainTips,1,2,2,0,1,0)
+      MET_RainTips=RAW_RainTips*CALIB_RAIN
+	    P_8_18_1_1_1 = MET_RainTips
+
+    'Barometric Pressure
+      VoltSe(MET_Barom_Press_mB,1,mV2500,11,False,0,250,0.240,500)
+      MET_Barom_Press_kPa = 0.1 *  MET_Barom_Press_mB
+    	PA_4_2_1_1_1 = MET_Barom_Press_kPa
+
+  	'PAR in sensor incoming on AM25T 
+      AM25T(RAW_PARin,1,mV25,18,1,-1,SYS_PanelT_AM25T_loop,4,8,Vx3,True,0,250,1,0)
+      MET_PARin = RAW_PARin * CALIB_PARin
+  	  PPFD_7_21_1_1_1 = MET_PARin
+
+    'PAR out sensor incoming on AM25T 
+      AM25T(RAW_PARout,1,mV25,6,1,-1,SYS_PanelT_AM25T_loop,4,8,Vx3,True,0,250,1,0)
+      MET_PARout = RAW_PARout * CALIB_PARout + OFFSET_PARout
+	    PPFDR_7_23_1_1_1 = MET_PARout	 
+
+	If IfTime(0,6,Min) Then
+    
+    'Soil heat flux plates AM25T Channel (3 reps)
+      AM25T(RAW_SHFP(),3,mV25,7,1,-1,SYS_PanelT_AM25T_loop,4,8,0,True,0,250,1,0)
+      MET_SHFP_1 = CALIB_HFP1in  * RAW_SHFP_1 + CALIB_HFP1offset
+      MET_SHFP_2 = CALIB_HFP2in  * RAW_SHFP_2 + CALIB_HFP2offset
+      MET_SHFP_3 = CALIB_HFP3in  * RAW_SHFP_3 + CALIB_HFP3offset
+
+	    SHF_6_37_1_1_1 = MET_SHFP_1
+	    SHF_6_37_2_1_1 = MET_SHFP_2
+	    SHF_6_37_3_1_1 = MET_SHFP_3
+	
+    ' Measure all 8 soil type T thermocouples:
+      AM25T(MET_SoilT(),8,mV2_5,10,1,TypeT,SYS_PanelT_AM25T_loop,4,8,Vx3,True,0,250,1,0)
+    'Ts Profile 1
+      TS_2_38_1_1_1 = MET_SoilT_P1_5cm
+      TS_2_38_1_2_1 = MET_SoilT_P1_10cm
+      TS_2_38_1_3_1 = MET_SoilT_P1_20cm
+      TS_2_38_1_4_1 = MET_SoilT_P1_50cm
+  	'Ts Profile 2
+      TS_2_38_2_1_1 = MET_SoilT_P2_5cm
+      TS_2_38_2_2_1 = MET_SoilT_P2_10cm
+      TS_2_38_2_3_1 = MET_SoilT_P2_20cm
+      TS_2_38_2_4_1 = MET_SoilT_P2_50cm
+	
+    EndIf
+
+    
+     'Measure two Type T thermocouples
+      AM25T(SYS_TypeT_TC(),2,mV2_5C,22,1,TypeT,SYS_PanelT_AM25T_loop,4,8,Vx3,True,0,250,1,0)
+      'TC charger space (copper-constantan) Thermocouple Measurements
+      SysChargerTC_99_99_1_1_1=SYS_chargerTC
+
+    'TC Battery Box (copper-constantan) Thermocouple Measurements
+      SysBatteryBoxTC_99_99_1_1_1=SYS_BatteryBoxTC
+
+    'Current Sensor Battery on DataloggerTypeE
+      AM25T(SYS_Batt_DCCurrent,1,mV250,24,1,-1,SYS_PanelT_AM25T_loop,4,8,Vx3,False,0,250,-1,0)
+      SysBattDCC_99_99_1_1_1=SYS_Batt_DCCurrent
+
+    'Voltage Battery Box on Datalogger
+      AM25T(SYS_PBox_Batt_Volt,1,mV2500,25,1,-1,SYS_PanelT_AM25T_loop,4,8,VX3,False,0,250,14.352762,0)
+      SYS_PBox_Batt_Volt = SYS_PBox_Batt_Volt / 1000
+      SysPBoxBattVolt_99_99_1_1_1=SYS_PBox_Batt_Volt
+
+    
+
+    'Record the Status variables every half hour
+    If TimeIntoInterval(0,30,Min)  Then
+      SYS_WatchdogErrors    = Status.WatchdogErrors(1,1)
+      SYS_SkippedRecords    = Status.SkippedRecord(1,1)
+      SYS_ProcessTime       = Status.ProcessTime(1,1)
+      SYS_MaxProcessTime    = Status.MaxProcTime(1,1)
+    EndIf
+
+    '-------------------- Modem Control----------------------------------------------
+    '      If NOT LeaveModemAlone Then
+    '      	If TimeIntoInterval(0,240,min) Then ' every 4 hrs on the hr, turn modem ON
+    '       		modem_OFF = False
+    '     		EndIf
+    '     		If TimeIntoInterval(15,240,min) Then '15 min after every 4 hrs, turn modem OFF
+    '       		modem_OFF = True
+    '      	EndIf
+    '      End If
+    '---------------------------------------------------------------------------------
+
+    CallTable(MET)
+    CallTable(RAW)
+    CallTable(Biomet)
+  NextScan
+EndProg
+
+
+   X        
