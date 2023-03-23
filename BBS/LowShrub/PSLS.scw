@@ -7,7 +7,7 @@
     </arrayids>
     <CreatedByDate></CreatedByDate>
     <CreatedByVersion></CreatedByVersion>
-    <IntermediateStorage>0</IntermediateStorage>
+    <IntermediateStorage>118</IntermediateStorage>
     <inlocstringlist>
       <string>1,BattV,0,0,0,0</string>
       <string>2,ProgSig,0,0,0,0</string>
@@ -2007,6 +2007,25 @@
                 <Options>Value Only,Value with Seconds,Value with Hr-Min,Value with Hr-Min-Sec</Options>
                 <OptionsIndex>1</OptionsIndex>
               </TComboAttribute>
+              <TImmutableIntegerAttribute>
+                <AltLongSensorName></AltLongSensorName>
+                <AltShortSensorName></AltShortSensorName>
+                <Caption></Caption>
+                <Handle>MaxOption</Handle>
+                <HelpContext>0</HelpContext>
+                <TypeTag>0</TypeTag>
+                <ValidOutPuts></ValidOutPuts>
+                <Value>0</Value>
+                <Units></Units>
+                <UnitsIndex>0</UnitsIndex>
+                <ActiveUnits></ActiveUnits>
+                <Enabled>True</Enabled>
+                <UserHidden>False</UserHidden>
+                <ShowInForm>False</ShowInForm>
+                <ShowInGrid>False</ShowInGrid>
+                <Group></Group>
+                <RepsEnabled>False</RepsEnabled>
+              </TImmutableIntegerAttribute>
             </attributes>
           </output>
           <output>
@@ -2226,7 +2245,7 @@
             <ShowInGrid>True</ShowInGrid>
             <Group></Group>
             <RepsEnabled>False</RepsEnabled>
-            <InLocAddr>0</InLocAddr>
+            <InLocAddr>3</InLocAddr>
             <UserEdited>True</UserEdited>
             <Options></Options>
             <OptionsIndex>3</OptionsIndex>
