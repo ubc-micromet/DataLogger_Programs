@@ -1,5 +1,7 @@
 See .FSL file for full set of column headers.
 
+**To Do* Ccreate a list of file headers that can be incorporated into processing programs
+
 Soil temperatures are measured with type T thermocouples at 5, 10, and 30 cm depths in seedling and removal areas
 
 * Temp_C_AVG: 5cm Seedling
