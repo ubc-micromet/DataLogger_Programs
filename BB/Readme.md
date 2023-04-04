@@ -17,3 +17,20 @@ CO2: (467.63 umol/mol) 489.8
 
 H2O: (16.0 C) 15.86 C, 731.0 umol/mol
 
+## "Clean" before change:
+
+
+Signal Strenght 100
+
+Zero:
+
+CO2: -7.90 umol/mmol
+H20: -6.4 mmol/mol, Dewpoint -65C
+
+Span:
+
+CO2: (467.63 umol/mol) 479.9
+
+H2O: (16.0 C) 15.53 C, 717.0 umol/mol
+
+
