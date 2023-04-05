@@ -1,5 +1,5 @@
-3/21/2023
-10:12:07
+4/4/2023
+13:16:29
 Created by Short Cut (4.4)
 Short Cut Program:  PSW_S.DEF
 
@@ -83,6 +83,14 @@ Short Cut Program:  PSW_S.DEF
 10 PA_uS_AVG  L
 11 Res1_AVG  L
 12 Res2_AVG  L
+13 ITemp_C_STD  L
+14 Temp_C_STD  L
+15 Temp_C_1_STD  L
+16 Temp_C_2_STD  L
+17 VW_STD  L
+18 PA_uS_STD  L
+19 Res1_STD  L
+20 Res2_STD  L
 
 122 Output_Table 1440.00 Min
 1 122 L
@@ -92,4 +100,4 @@ Short Cut Program:  PSW_S.DEF
 5 BattV_MIN  L
 6 ProgSig  L
 
-Estimated final storage locations used per day:     582
+Estimated final storage locations used per day:     966

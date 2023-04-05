@@ -87,7 +87,7 @@
       <datatables/>
     </crbasicprogram>
     <idgenerator>
-      <CurrentOrdinalNumber>10</CurrentOrdinalNumber>
+      <CurrentOrdinalNumber>16</CurrentOrdinalNumber>
     </idgenerator>
     <loggerid>
       <ID>0</ID>
@@ -122,7 +122,7 @@
     <HighResolutionLabel>high</HighResolutionLabel>
     <LowResolutionLabel>low</LowResolutionLabel>
     <OutputIntervalUnits>Minutes</OutputIntervalUnits>
-    <ScanRate>30</ScanRate>
+    <ScanRate>1</ScanRate>
     <ScanUnits>Seconds</ScanUnits>
     <ScanUnitsIndex>0</ScanUnitsIndex>
     <SupportsStar4>True</SupportsStar4>
@@ -2096,6 +2096,31 @@
             <TableNumber>0</TableNumber>
             <attributes/>
           </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>stddev.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50700</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Standard Deviation</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>StdDev</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>ITemp_C</Measurement>
+            <OutputID>11</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>ITemp_C_STD</string>
+            </outputlabels>
+            <parentAttributeHandle>ITemp</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
         </outputs>
       </sensor>
       <sensor>
@@ -2264,6 +2289,31 @@
             <TableNumber>0</TableNumber>
             <attributes/>
           </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>stddev.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50700</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Standard Deviation</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>StdDev</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>Temp_C</Measurement>
+            <OutputID>12</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>Temp_C_STD</string>
+            </outputlabels>
+            <parentAttributeHandle>TCTemp</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
         </outputs>
       </sensor>
       <sensor>
@@ -2362,6 +2412,31 @@
             <TableNumber>0</TableNumber>
             <attributes/>
           </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>stddev.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50700</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Standard Deviation</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>StdDev</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>Temp_C_1</Measurement>
+            <OutputID>13</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>Temp_C_1_STD</string>
+            </outputlabels>
+            <parentAttributeHandle>TCTemp</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
         </outputs>
       </sensor>
       <sensor>
@@ -2452,6 +2527,31 @@
             <OutputFileVersion>1.12</OutputFileVersion>
             <outputlabels>
               <string>Temp_C_2_AVG</string>
+            </outputlabels>
+            <parentAttributeHandle>TCTemp</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>stddev.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50700</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Standard Deviation</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>StdDev</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>Temp_C_2</Measurement>
+            <OutputID>14</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>Temp_C_2_STD</string>
             </outputlabels>
             <parentAttributeHandle>TCTemp</parentAttributeHandle>
             <ParentSensorID>0</ParentSensorID>
@@ -2698,6 +2798,56 @@
             <OutputFileVersion>1.12</OutputFileVersion>
             <outputlabels>
               <string>PA_uS_AVG</string>
+            </outputlabels>
+            <parentAttributeHandle>Period</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>stddev.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50700</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Standard Deviation</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>StdDev</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>VW</Measurement>
+            <OutputID>15</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>VW_STD</string>
+            </outputlabels>
+            <parentAttributeHandle>Water</parentAttributeHandle>
+            <ParentSensorID>0</ParentSensorID>
+            <Resolution>45</Resolution>
+            <FSLabelChanged>False</FSLabelChanged>
+            <TableNumber>0</TableNumber>
+            <attributes/>
+          </output>
+          <output>
+            <CanEdit>True</CanEdit>
+            <FileName>stddev.out</FileName>
+            <FileVersion>1.12</FileVersion>
+            <HelpContext>50700</HelpContext>
+            <HelpFile>scwin.chm</HelpFile>
+            <ImageFilename></ImageFilename>
+            <LongName>Standard Deviation</LongName>
+            <ShortCutVersion>3.2</ShortCutVersion>
+            <ShortName>StdDev</ShortName>
+            <Automatic>False</Automatic>
+            <IsDefaultOutput>False</IsDefaultOutput>
+            <Measurement>PA_uS</Measurement>
+            <OutputID>16</OutputID>
+            <OutputFileVersion>1.12</OutputFileVersion>
+            <outputlabels>
+              <string>PA_uS_STD</string>
             </outputlabels>
             <parentAttributeHandle>Period</parentAttributeHandle>
             <ParentSensorID>0</ParentSensorID>
