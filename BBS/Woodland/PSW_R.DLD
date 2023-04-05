@@ -8,8 +8,8 @@
 
 ;%
 ;Final Storage Label File for:  PSW_R.SCW
-;Date:  3/14/2023
-;Time:  12:23:48
+;Date:  4/4/2023
+;Time:  13:16:00
 ;
 ;131 Output_Table  30.00 Min
 ;1 131 L
@@ -22,6 +22,12 @@
 ;8 Temp_C_2_AVG  L
 ;9 VW_AVG  L
 ;10 PA_uS_AVG  L
+;11 ITemp_C_STD  L
+;12 Temp_C_STD  L
+;13 Temp_C_1_STD  L
+;14 Temp_C_2_STD  L
+;15 VW_STD  L
+;16 PA_uS_STD  L
 ;
 ;132 Output_Table 1440.00 Min
 ;1 132 L
@@ -31,11 +37,11 @@
 ;5 BattV_MIN  L
 ;6 ProgSig  L
 ;
-;Estimated final storage locations used per day:     486
+;Estimated final storage locations used per day:     774
 ;%
 
 MODE 1
-SCAN RATE 30.0000
+SCAN RATE 1.0000
 
 1:P10
 1:1
@@ -118,24 +124,48 @@ SCAN RATE 30.0000
 1:1
 2:8
 
-18:P92
+18:P82
+1:1
+2:3
+
+19:P82
+1:1
+2:4
+
+20:P82
+1:1
+2:5
+
+21:P82
+1:1
+2:6
+
+22:P82
+1:1
+2:7
+
+23:P82
+1:1
+2:8
+
+24:P92
 1:0
 2:1440
 3:10
 
-19:P80
+25:P80
 1:1
 2:132
 
-20:P77
+26:P77
 1:1220
 
-21:P74
+27:P74
 1:1
 2:0
 3:1
 
-22:P70
+28:P70
 1:1
 2:2
 
@@ -149,7 +179,7 @@ MODE 3
 
 MODE 10
 1:28
-2:116
+2:140
 3:0
 
 MODE 12

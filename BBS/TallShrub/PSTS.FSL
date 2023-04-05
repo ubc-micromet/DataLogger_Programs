@@ -1,6 +1,6 @@
 Final Storage Label File for:  PSTS.SCW
-Date:  3/14/2023
-Time:  12:23:15
+Date:  4/4/2023
+Time:  13:15:39
 
 111 Output_Table  30.00 Min
 1 111 L
@@ -14,6 +14,13 @@ Time:  12:23:15
 9 Temp_C_3_AVG  L
 10 Temp_C_4_AVG  L
 11 Temp_C_5_AVG  L
+12 ITemp_C_STD  L
+13 Temp_C_STD  L
+14 Temp_C_1_STD  L
+15 Temp_C_2_STD  L
+16 Temp_C_3_STD  L
+17 Temp_C_4_STD  L
+18 Temp_C_5_STD  L
 
 112 Output_Table 1440.00 Min
 1 112 L
@@ -23,4 +30,4 @@ Time:  12:23:15
 5 BattV_MIN  L
 6 ProgSig  L
 
-Estimated final storage locations used per day:     534
+Estimated final storage locations used per day:     870

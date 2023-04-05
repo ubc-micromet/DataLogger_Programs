@@ -1,6 +1,6 @@
 Final Storage Label File for:  PSW_S.SCW
-Date:  3/21/2023
-Time:  10:12:07
+Date:  4/4/2023
+Time:  13:16:29
 
 121 Output_Table  30.00 Min
 1 121 L
@@ -15,6 +15,14 @@ Time:  10:12:07
 10 PA_uS_AVG  L
 11 Res1_AVG  L
 12 Res2_AVG  L
+13 ITemp_C_STD  L
+14 Temp_C_STD  L
+15 Temp_C_1_STD  L
+16 Temp_C_2_STD  L
+17 VW_STD  L
+18 PA_uS_STD  L
+19 Res1_STD  L
+20 Res2_STD  L
 
 122 Output_Table 1440.00 Min
 1 122 L
@@ -24,4 +32,4 @@ Time:  10:12:07
 5 BattV_MIN  L
 6 ProgSig  L
 
-Estimated final storage locations used per day:     582
+Estimated final storage locations used per day:     966

@@ -1,5 +1,5 @@
-3/21/2023
-14:26:05
+4/4/2023
+13:10:32
 Created by Short Cut (4.4)
 Short Cut Program:  PSLS.DEF
 
@@ -68,6 +68,13 @@ Short Cut Program:  PSLS.DEF
 9 Temp_C_3_AVG  L
 10 Temp_C_4_AVG  L
 11 Temp_C_5_AVG  L
+12 ITemp_C_STD  L
+13 Temp_C_STD  L
+14 Temp_C_1_STD  L
+15 Temp_C_2_STD  L
+16 Temp_C_3_STD  L
+17 Temp_C_4_STD  L
+18 Temp_C_5_STD  L
 
 102 Output_Table 1440.00 Min
 1 102 L
@@ -77,4 +84,4 @@ Short Cut Program:  PSLS.DEF
 5 BattV_MIN  L
 6 ProgSig  L
 
-Estimated final storage locations used per day:     534
+Estimated final storage locations used per day:     870
