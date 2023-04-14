@@ -1,0 +1,60 @@
+4/13/2023
+18:24:01
+Created by Short Cut (4.4)
+Short Cut Program:  PSLS_S.DEF
+
+-Wiring for CR10X-
+
+  Type T TC (1)
+    1H:  Blue
+    1L:  Red
+
+  Type T TC (2)
+    2H:  Blue
+    2L:  Red
+
+  Type T TC (3)
+    3H:  Blue
+    3L:  Red
+
+-Measurement Labels-
+
+  Default
+    1  BattV
+    2  ProgSig
+
+  Internal Temp
+    3  ITemp_C
+
+  Type T TC (1)
+    4  Temp_C
+
+  Type T TC (2)
+    5  Temp_C_1
+
+  Type T TC (3)
+    6  Temp_C_2
+
+141 Output_Table  30.00 Min
+1 141 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 ITemp_C_AVG  L
+6 Temp_C_AVG  L
+7 Temp_C_1_AVG  L
+8 Temp_C_2_AVG  L
+9 ITemp_C_STD  L
+10 Temp_C_STD  L
+11 Temp_C_1_STD  L
+12 Temp_C_2_STD  L
+
+142 Output_Table 1440.00 Min
+1 142 L
+2 Year_RTM  L
+3 Day_RTM  L
+4 Hour_Minute_RTM  L
+5 BattV_MIN  L
+6 ProgSig  L
+
+Estimated final storage locations used per day:     582
