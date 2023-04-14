@@ -2,8 +2,8 @@
   <scprogram>
     <Advanced>False</Advanced>
     <arrayids>
-      <string>101</string>
-      <string>102</string>
+      <string>141</string>
+      <string>142</string>
     </arrayids>
     <CreatedByDate></CreatedByDate>
     <CreatedByVersion></CreatedByVersion>
@@ -15,9 +15,6 @@
       <string>4,Temp_C,0,0,0,0</string>
       <string>5,Temp_C_1,0,0,0,0</string>
       <string>6,Temp_C_2,0,0,0,0</string>
-      <string>7,Temp_C_3,0,0,0,0</string>
-      <string>8,Temp_C_4,0,0,0,0</string>
-      <string>9,Temp_C_5,0,0,0,0</string>
     </inlocstringlist>
     <Modified>True</Modified>
     <storagerates>
@@ -110,7 +107,7 @@
     <Extension>.DLD</Extension>
     <Filename>C:\Program Files (x86)\Campbellsci\SCWin\cr10x.dlf</Filename>
     <Name>CR10X</Name>
-    <NextSensorID>8</NextSensorID>
+    <NextSensorID>5</NextSensorID>
     <DisplayName>CR10X</DisplayName>
     <MAXExcitationCurrent_mA>0</MAXExcitationCurrent_mA>
     <MAXExcitationVoltage_mV>0</MAXExcitationVoltage_mV>
@@ -1285,7 +1282,7 @@
         <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>1</Consumed>
+        <Consumed>0</Consumed>
         <StripNumber>1</StripNumber>
         <TerminalName>4H</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1294,26 +1291,10 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes>
-          <connectorattribute>
-            <CalledBy>100</CalledBy>
-            <ConsumedPercent>100</ConsumedPercent>
-            <GPLabel></GPLabel>
-            <Handle>TCDiff</Handle>
-            <JumperID>0</JumperID>
-            <SensorID>6</SensorID>
-            <SensorName>Type T TC</SensorName>
-            <WireCaption></WireCaption>
-            <WireColor>Blue</WireColor>
-            <SensorGroup></SensorGroup>
-            <ConnectorGroup></ConnectorGroup>
-            <ChannelType>1</ChannelType>
-            <AllowWireMove>True</AllowWireMove>
-          </connectorattribute>
-        </connectorattributes>
+        <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>1</Consumed>
+        <Consumed>0</Consumed>
         <StripNumber>1</StripNumber>
         <TerminalName>4L</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1322,23 +1303,7 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes>
-          <connectorattribute>
-            <CalledBy>100</CalledBy>
-            <ConsumedPercent>100</ConsumedPercent>
-            <GPLabel></GPLabel>
-            <Handle>TCDiff</Handle>
-            <JumperID>0</JumperID>
-            <SensorID>6</SensorID>
-            <SensorName>Type T TC</SensorName>
-            <WireCaption></WireCaption>
-            <WireColor>Red</WireColor>
-            <SensorGroup></SensorGroup>
-            <ConnectorGroup></ConnectorGroup>
-            <ChannelType>1</ChannelType>
-            <AllowWireMove>True</AllowWireMove>
-          </connectorattribute>
-        </connectorattributes>
+        <connectorattributes/>
       </connector>
       <connector>
         <Consumed>0</Consumed>
@@ -1353,7 +1318,7 @@
         <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>1</Consumed>
+        <Consumed>0</Consumed>
         <StripNumber>1</StripNumber>
         <TerminalName>5H</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1362,26 +1327,10 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes>
-          <connectorattribute>
-            <CalledBy>100</CalledBy>
-            <ConsumedPercent>100</ConsumedPercent>
-            <GPLabel></GPLabel>
-            <Handle>TCDiff</Handle>
-            <JumperID>0</JumperID>
-            <SensorID>7</SensorID>
-            <SensorName>Type T TC</SensorName>
-            <WireCaption></WireCaption>
-            <WireColor>Blue</WireColor>
-            <SensorGroup></SensorGroup>
-            <ConnectorGroup></ConnectorGroup>
-            <ChannelType>1</ChannelType>
-            <AllowWireMove>True</AllowWireMove>
-          </connectorattribute>
-        </connectorattributes>
+        <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>1</Consumed>
+        <Consumed>0</Consumed>
         <StripNumber>1</StripNumber>
         <TerminalName>5L</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1390,23 +1339,7 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes>
-          <connectorattribute>
-            <CalledBy>100</CalledBy>
-            <ConsumedPercent>100</ConsumedPercent>
-            <GPLabel></GPLabel>
-            <Handle>TCDiff</Handle>
-            <JumperID>0</JumperID>
-            <SensorID>7</SensorID>
-            <SensorName>Type T TC</SensorName>
-            <WireCaption></WireCaption>
-            <WireColor>Red</WireColor>
-            <SensorGroup></SensorGroup>
-            <ConnectorGroup></ConnectorGroup>
-            <ChannelType>1</ChannelType>
-            <AllowWireMove>True</AllowWireMove>
-          </connectorattribute>
-        </connectorattributes>
+        <connectorattributes/>
       </connector>
       <connector>
         <Consumed>0</Consumed>
@@ -1421,7 +1354,7 @@
         <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>1</Consumed>
+        <Consumed>0</Consumed>
         <StripNumber>1</StripNumber>
         <TerminalName>6H</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1430,26 +1363,10 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes>
-          <connectorattribute>
-            <CalledBy>100</CalledBy>
-            <ConsumedPercent>100</ConsumedPercent>
-            <GPLabel></GPLabel>
-            <Handle>TCDiff</Handle>
-            <JumperID>0</JumperID>
-            <SensorID>8</SensorID>
-            <SensorName>Type T TC</SensorName>
-            <WireCaption></WireCaption>
-            <WireColor>Blue</WireColor>
-            <SensorGroup></SensorGroup>
-            <ConnectorGroup></ConnectorGroup>
-            <ChannelType>1</ChannelType>
-            <AllowWireMove>True</AllowWireMove>
-          </connectorattribute>
-        </connectorattributes>
+        <connectorattributes/>
       </connector>
       <connector>
-        <Consumed>1</Consumed>
+        <Consumed>0</Consumed>
         <StripNumber>1</StripNumber>
         <TerminalName>6L</TerminalName>
         <UsedFor>0</UsedFor>
@@ -1458,23 +1375,7 @@
         <partner>-1</partner>
         <pref_ground>-1</pref_ground>
         <partner_type>-1</partner_type>
-        <connectorattributes>
-          <connectorattribute>
-            <CalledBy>100</CalledBy>
-            <ConsumedPercent>100</ConsumedPercent>
-            <GPLabel></GPLabel>
-            <Handle>TCDiff</Handle>
-            <JumperID>0</JumperID>
-            <SensorID>8</SensorID>
-            <SensorName>Type T TC</SensorName>
-            <WireCaption></WireCaption>
-            <WireColor>Red</WireColor>
-            <SensorGroup></SensorGroup>
-            <ConnectorGroup></ConnectorGroup>
-            <ChannelType>1</ChannelType>
-            <AllowWireMove>True</AllowWireMove>
-          </connectorattribute>
-        </connectorattributes>
+        <connectorattributes/>
       </connector>
       <connector>
         <Consumed>0</Consumed>
@@ -2178,7 +2079,7 @@
         <MuxFile></MuxFile>
         <MuxToLogger>False</MuxToLogger>
         <ParentSensorID>-1</ParentSensorID>
-        <Reps>6</Reps>
+        <Reps>3</Reps>
         <SensorID>3</SensorID>
         <SpanCards>True</SpanCards>
         <UserRepsEnabled>True</UserRepsEnabled>
@@ -2193,7 +2094,7 @@
             <HelpContext>0</HelpContext>
             <TypeTag>0</TypeTag>
             <ValidOutPuts></ValidOutPuts>
-            <Value>6</Value>
+            <Value>3</Value>
             <Units></Units>
             <UnitsIndex>1</UnitsIndex>
             <ActiveUnits></ActiveUnits>
@@ -2270,7 +2171,7 @@
             <ShowInGrid>True</ShowInGrid>
             <Group></Group>
             <RepsEnabled>False</RepsEnabled>
-            <InLocAddr>3</InLocAddr>
+            <InLocAddr>0</InLocAddr>
             <UserEdited>True</UserEdited>
             <Options></Options>
             <OptionsIndex>3</OptionsIndex>
@@ -2588,375 +2489,6 @@
             <OutputFileVersion>1.12</OutputFileVersion>
             <outputlabels>
               <string>Temp_C_2_STD</string>
-            </outputlabels>
-            <parentAttributeHandle>TCTemp</parentAttributeHandle>
-            <ParentSensorID>0</ParentSensorID>
-            <Resolution>45</Resolution>
-            <FSLabelChanged>False</FSLabelChanged>
-            <TableNumber>0</TableNumber>
-            <attributes/>
-          </output>
-        </outputs>
-      </sensor>
-      <sensor>
-        <CanEdit>True</CanEdit>
-        <FileName>tct.scs</FileName>
-        <FileVersion>3.4</FileVersion>
-        <HelpContext>21200</HelpContext>
-        <HelpFile>scwin.chm</HelpFile>
-        <ImageFilename>C:\Program Files (x86)\Campbellsci\SCWin\Images\tct.jpg</ImageFilename>
-        <LongName>Temperature\Type T Thermocouple</LongName>
-        <ShortCutVersion>2.9</ShortCutVersion>
-        <ShortName>Type T TC</ShortName>
-        <WireColorEditable>False</WireColorEditable>
-        <AllowWireMove>True</AllowWireMove>
-        <Category>0</Category>
-        <ConnectedToID>25371</ConnectedToID>
-        <Duplicate>True</Duplicate>
-        <Exclusive>False</Exclusive>
-        <MuxFile></MuxFile>
-        <MuxToLogger>False</MuxToLogger>
-        <ParentSensorID>3</ParentSensorID>
-        <Reps>0</Reps>
-        <SensorID>6</SensorID>
-        <SpanCards>True</SpanCards>
-        <UserRepsEnabled>True</UserRepsEnabled>
-        <SyncVariableSuffixes>False</SyncVariableSuffixes>
-        <TabName>Type T TC</TabName>
-        <attributes>
-          <TAttribute>
-            <AltLongSensorName></AltLongSensorName>
-            <AltShortSensorName></AltShortSensorName>
-            <Caption>DiffAnalog</Caption>
-            <Handle>TCDiff</Handle>
-            <HelpContext>0</HelpContext>
-            <TypeTag>1</TypeTag>
-            <ValidOutPuts></ValidOutPuts>
-            <Value>4</Value>
-            <Units></Units>
-            <UnitsIndex>1</UnitsIndex>
-            <ActiveUnits></ActiveUnits>
-            <Enabled>True</Enabled>
-            <UserHidden>False</UserHidden>
-            <ShowInForm>False</ShowInForm>
-            <ShowInGrid>False</ShowInGrid>
-            <Group></Group>
-            <RepsEnabled>False</RepsEnabled>
-          </TAttribute>
-          <TVariableAttribute>
-            <AltLongSensorName></AltLongSensorName>
-            <AltShortSensorName></AltShortSensorName>
-            <Caption>Temperature</Caption>
-            <Handle>TCTemp</Handle>
-            <HelpContext>21200</HelpContext>
-            <TypeTag>0</TypeTag>
-            <ValidOutPuts>sample,average,stddev,maximum,minimum,eto</ValidOutPuts>
-            <Value>Temp_C_3</Value>
-            <Units>Deg C,Deg F,K</Units>
-            <UnitsIndex>1</UnitsIndex>
-            <ActiveUnits>Deg C</ActiveUnits>
-            <Enabled>True</Enabled>
-            <UserHidden>False</UserHidden>
-            <ShowInForm>True</ShowInForm>
-            <ShowInGrid>True</ShowInGrid>
-            <Group></Group>
-            <RepsEnabled>True</RepsEnabled>
-            <InLocAddr>7</InLocAddr>
-            <UserEdited>False</UserEdited>
-            <CRBasicDataType>dtFloat</CRBasicDataType>
-            <DataLength>0</DataLength>
-            <isPublic>True</isPublic>
-          </TVariableAttribute>
-        </attributes>
-        <outputs>
-          <output>
-            <CanEdit>True</CanEdit>
-            <FileName>average.out</FileName>
-            <FileVersion>1.12</FileVersion>
-            <HelpContext>50100</HelpContext>
-            <HelpFile>scwin.chm</HelpFile>
-            <ImageFilename></ImageFilename>
-            <LongName>Average</LongName>
-            <ShortCutVersion>3.2</ShortCutVersion>
-            <ShortName>Average</ShortName>
-            <Automatic>False</Automatic>
-            <IsDefaultOutput>False</IsDefaultOutput>
-            <Measurement>Temp_C_3</Measurement>
-            <OutputID>9</OutputID>
-            <OutputFileVersion>1.12</OutputFileVersion>
-            <outputlabels>
-              <string>Temp_C_3_AVG</string>
-            </outputlabels>
-            <parentAttributeHandle>TCTemp</parentAttributeHandle>
-            <ParentSensorID>0</ParentSensorID>
-            <Resolution>45</Resolution>
-            <FSLabelChanged>False</FSLabelChanged>
-            <TableNumber>0</TableNumber>
-            <attributes/>
-          </output>
-          <output>
-            <CanEdit>True</CanEdit>
-            <FileName>stddev.out</FileName>
-            <FileVersion>1.12</FileVersion>
-            <HelpContext>50700</HelpContext>
-            <HelpFile>scwin.chm</HelpFile>
-            <ImageFilename></ImageFilename>
-            <LongName>Standard Deviation</LongName>
-            <ShortCutVersion>3.2</ShortCutVersion>
-            <ShortName>StdDev</ShortName>
-            <Automatic>False</Automatic>
-            <IsDefaultOutput>False</IsDefaultOutput>
-            <Measurement>Temp_C_3</Measurement>
-            <OutputID>16</OutputID>
-            <OutputFileVersion>1.12</OutputFileVersion>
-            <outputlabels>
-              <string>Temp_C_3_STD</string>
-            </outputlabels>
-            <parentAttributeHandle>TCTemp</parentAttributeHandle>
-            <ParentSensorID>0</ParentSensorID>
-            <Resolution>45</Resolution>
-            <FSLabelChanged>False</FSLabelChanged>
-            <TableNumber>0</TableNumber>
-            <attributes/>
-          </output>
-        </outputs>
-      </sensor>
-      <sensor>
-        <CanEdit>True</CanEdit>
-        <FileName>tct.scs</FileName>
-        <FileVersion>3.4</FileVersion>
-        <HelpContext>21200</HelpContext>
-        <HelpFile>scwin.chm</HelpFile>
-        <ImageFilename>C:\Program Files (x86)\Campbellsci\SCWin\Images\tct.jpg</ImageFilename>
-        <LongName>Temperature\Type T Thermocouple</LongName>
-        <ShortCutVersion>2.9</ShortCutVersion>
-        <ShortName>Type T TC</ShortName>
-        <WireColorEditable>False</WireColorEditable>
-        <AllowWireMove>True</AllowWireMove>
-        <Category>0</Category>
-        <ConnectedToID>25371</ConnectedToID>
-        <Duplicate>True</Duplicate>
-        <Exclusive>False</Exclusive>
-        <MuxFile></MuxFile>
-        <MuxToLogger>False</MuxToLogger>
-        <ParentSensorID>3</ParentSensorID>
-        <Reps>0</Reps>
-        <SensorID>7</SensorID>
-        <SpanCards>True</SpanCards>
-        <UserRepsEnabled>True</UserRepsEnabled>
-        <SyncVariableSuffixes>False</SyncVariableSuffixes>
-        <TabName>Type T TC</TabName>
-        <attributes>
-          <TAttribute>
-            <AltLongSensorName></AltLongSensorName>
-            <AltShortSensorName></AltShortSensorName>
-            <Caption>DiffAnalog</Caption>
-            <Handle>TCDiff</Handle>
-            <HelpContext>0</HelpContext>
-            <TypeTag>1</TypeTag>
-            <ValidOutPuts></ValidOutPuts>
-            <Value>5</Value>
-            <Units></Units>
-            <UnitsIndex>1</UnitsIndex>
-            <ActiveUnits></ActiveUnits>
-            <Enabled>True</Enabled>
-            <UserHidden>False</UserHidden>
-            <ShowInForm>False</ShowInForm>
-            <ShowInGrid>False</ShowInGrid>
-            <Group></Group>
-            <RepsEnabled>False</RepsEnabled>
-          </TAttribute>
-          <TVariableAttribute>
-            <AltLongSensorName></AltLongSensorName>
-            <AltShortSensorName></AltShortSensorName>
-            <Caption>Temperature</Caption>
-            <Handle>TCTemp</Handle>
-            <HelpContext>21200</HelpContext>
-            <TypeTag>0</TypeTag>
-            <ValidOutPuts>sample,average,stddev,maximum,minimum,eto</ValidOutPuts>
-            <Value>Temp_C_4</Value>
-            <Units>Deg C,Deg F,K</Units>
-            <UnitsIndex>1</UnitsIndex>
-            <ActiveUnits>Deg C</ActiveUnits>
-            <Enabled>True</Enabled>
-            <UserHidden>False</UserHidden>
-            <ShowInForm>True</ShowInForm>
-            <ShowInGrid>True</ShowInGrid>
-            <Group></Group>
-            <RepsEnabled>True</RepsEnabled>
-            <InLocAddr>8</InLocAddr>
-            <UserEdited>False</UserEdited>
-            <CRBasicDataType>dtFloat</CRBasicDataType>
-            <DataLength>0</DataLength>
-            <isPublic>True</isPublic>
-          </TVariableAttribute>
-        </attributes>
-        <outputs>
-          <output>
-            <CanEdit>True</CanEdit>
-            <FileName>average.out</FileName>
-            <FileVersion>1.12</FileVersion>
-            <HelpContext>50100</HelpContext>
-            <HelpFile>scwin.chm</HelpFile>
-            <ImageFilename></ImageFilename>
-            <LongName>Average</LongName>
-            <ShortCutVersion>3.2</ShortCutVersion>
-            <ShortName>Average</ShortName>
-            <Automatic>False</Automatic>
-            <IsDefaultOutput>False</IsDefaultOutput>
-            <Measurement>Temp_C_4</Measurement>
-            <OutputID>10</OutputID>
-            <OutputFileVersion>1.12</OutputFileVersion>
-            <outputlabels>
-              <string>Temp_C_4_AVG</string>
-            </outputlabels>
-            <parentAttributeHandle>TCTemp</parentAttributeHandle>
-            <ParentSensorID>0</ParentSensorID>
-            <Resolution>45</Resolution>
-            <FSLabelChanged>False</FSLabelChanged>
-            <TableNumber>0</TableNumber>
-            <attributes/>
-          </output>
-          <output>
-            <CanEdit>True</CanEdit>
-            <FileName>stddev.out</FileName>
-            <FileVersion>1.12</FileVersion>
-            <HelpContext>50700</HelpContext>
-            <HelpFile>scwin.chm</HelpFile>
-            <ImageFilename></ImageFilename>
-            <LongName>Standard Deviation</LongName>
-            <ShortCutVersion>3.2</ShortCutVersion>
-            <ShortName>StdDev</ShortName>
-            <Automatic>False</Automatic>
-            <IsDefaultOutput>False</IsDefaultOutput>
-            <Measurement>Temp_C_4</Measurement>
-            <OutputID>17</OutputID>
-            <OutputFileVersion>1.12</OutputFileVersion>
-            <outputlabels>
-              <string>Temp_C_4_STD</string>
-            </outputlabels>
-            <parentAttributeHandle>TCTemp</parentAttributeHandle>
-            <ParentSensorID>0</ParentSensorID>
-            <Resolution>45</Resolution>
-            <FSLabelChanged>False</FSLabelChanged>
-            <TableNumber>0</TableNumber>
-            <attributes/>
-          </output>
-        </outputs>
-      </sensor>
-      <sensor>
-        <CanEdit>True</CanEdit>
-        <FileName>tct.scs</FileName>
-        <FileVersion>3.4</FileVersion>
-        <HelpContext>21200</HelpContext>
-        <HelpFile>scwin.chm</HelpFile>
-        <ImageFilename>C:\Program Files (x86)\Campbellsci\SCWin\Images\tct.jpg</ImageFilename>
-        <LongName>Temperature\Type T Thermocouple</LongName>
-        <ShortCutVersion>2.9</ShortCutVersion>
-        <ShortName>Type T TC</ShortName>
-        <WireColorEditable>False</WireColorEditable>
-        <AllowWireMove>True</AllowWireMove>
-        <Category>0</Category>
-        <ConnectedToID>25371</ConnectedToID>
-        <Duplicate>True</Duplicate>
-        <Exclusive>False</Exclusive>
-        <MuxFile></MuxFile>
-        <MuxToLogger>False</MuxToLogger>
-        <ParentSensorID>3</ParentSensorID>
-        <Reps>0</Reps>
-        <SensorID>8</SensorID>
-        <SpanCards>True</SpanCards>
-        <UserRepsEnabled>True</UserRepsEnabled>
-        <SyncVariableSuffixes>False</SyncVariableSuffixes>
-        <TabName>Type T TC</TabName>
-        <attributes>
-          <TAttribute>
-            <AltLongSensorName></AltLongSensorName>
-            <AltShortSensorName></AltShortSensorName>
-            <Caption>DiffAnalog</Caption>
-            <Handle>TCDiff</Handle>
-            <HelpContext>0</HelpContext>
-            <TypeTag>1</TypeTag>
-            <ValidOutPuts></ValidOutPuts>
-            <Value>6</Value>
-            <Units></Units>
-            <UnitsIndex>1</UnitsIndex>
-            <ActiveUnits></ActiveUnits>
-            <Enabled>True</Enabled>
-            <UserHidden>False</UserHidden>
-            <ShowInForm>False</ShowInForm>
-            <ShowInGrid>False</ShowInGrid>
-            <Group></Group>
-            <RepsEnabled>False</RepsEnabled>
-          </TAttribute>
-          <TVariableAttribute>
-            <AltLongSensorName></AltLongSensorName>
-            <AltShortSensorName></AltShortSensorName>
-            <Caption>Temperature</Caption>
-            <Handle>TCTemp</Handle>
-            <HelpContext>21200</HelpContext>
-            <TypeTag>0</TypeTag>
-            <ValidOutPuts>sample,average,stddev,maximum,minimum,eto</ValidOutPuts>
-            <Value>Temp_C_5</Value>
-            <Units>Deg C,Deg F,K</Units>
-            <UnitsIndex>1</UnitsIndex>
-            <ActiveUnits>Deg C</ActiveUnits>
-            <Enabled>True</Enabled>
-            <UserHidden>False</UserHidden>
-            <ShowInForm>True</ShowInForm>
-            <ShowInGrid>True</ShowInGrid>
-            <Group></Group>
-            <RepsEnabled>True</RepsEnabled>
-            <InLocAddr>9</InLocAddr>
-            <UserEdited>False</UserEdited>
-            <CRBasicDataType>dtFloat</CRBasicDataType>
-            <DataLength>0</DataLength>
-            <isPublic>True</isPublic>
-          </TVariableAttribute>
-        </attributes>
-        <outputs>
-          <output>
-            <CanEdit>True</CanEdit>
-            <FileName>average.out</FileName>
-            <FileVersion>1.12</FileVersion>
-            <HelpContext>50100</HelpContext>
-            <HelpFile>scwin.chm</HelpFile>
-            <ImageFilename></ImageFilename>
-            <LongName>Average</LongName>
-            <ShortCutVersion>3.2</ShortCutVersion>
-            <ShortName>Average</ShortName>
-            <Automatic>False</Automatic>
-            <IsDefaultOutput>False</IsDefaultOutput>
-            <Measurement>Temp_C_5</Measurement>
-            <OutputID>11</OutputID>
-            <OutputFileVersion>1.12</OutputFileVersion>
-            <outputlabels>
-              <string>Temp_C_5_AVG</string>
-            </outputlabels>
-            <parentAttributeHandle>TCTemp</parentAttributeHandle>
-            <ParentSensorID>0</ParentSensorID>
-            <Resolution>45</Resolution>
-            <FSLabelChanged>False</FSLabelChanged>
-            <TableNumber>0</TableNumber>
-            <attributes/>
-          </output>
-          <output>
-            <CanEdit>True</CanEdit>
-            <FileName>stddev.out</FileName>
-            <FileVersion>1.12</FileVersion>
-            <HelpContext>50700</HelpContext>
-            <HelpFile>scwin.chm</HelpFile>
-            <ImageFilename></ImageFilename>
-            <LongName>Standard Deviation</LongName>
-            <ShortCutVersion>3.2</ShortCutVersion>
-            <ShortName>StdDev</ShortName>
-            <Automatic>False</Automatic>
-            <IsDefaultOutput>False</IsDefaultOutput>
-            <Measurement>Temp_C_5</Measurement>
-            <OutputID>18</OutputID>
-            <OutputFileVersion>1.12</OutputFileVersion>
-            <outputlabels>
-              <string>Temp_C_5_STD</string>
             </outputlabels>
             <parentAttributeHandle>TCTemp</parentAttributeHandle>
             <ParentSensorID>0</ParentSensorID>
