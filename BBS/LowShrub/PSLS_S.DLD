@@ -8,8 +8,8 @@
 
 ;%
 ;Final Storage Label File for:  PSLS_S.SCW
-;Date:  4/13/2023
-;Time:  18:24:01
+;Date:  7/18/2023
+;Time:  16:29:53
 ;
 ;141 Output_Table  30.00 Min
 ;1 141 L
@@ -37,7 +37,7 @@
 ;%
 
 MODE 1
-SCAN RATE 1.0000
+SCAN RATE 60.0000
 
 1:P10
 1:1

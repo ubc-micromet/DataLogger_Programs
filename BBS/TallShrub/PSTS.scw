@@ -123,7 +123,7 @@
     <HighResolutionLabel>high</HighResolutionLabel>
     <LowResolutionLabel>low</LowResolutionLabel>
     <OutputIntervalUnits>Minutes</OutputIntervalUnits>
-    <ScanRate>1</ScanRate>
+    <ScanRate>60</ScanRate>
     <ScanUnits>Seconds</ScanUnits>
     <ScanUnitsIndex>0</ScanUnitsIndex>
     <SupportsStar4>True</SupportsStar4>

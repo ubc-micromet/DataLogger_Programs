@@ -8,8 +8,8 @@
 
 ;%
 ;Final Storage Label File for:  PSW_R.SCW
-;Date:  4/4/2023
-;Time:  13:16:00
+;Date:  7/18/2023
+;Time:  16:28:59
 ;
 ;131 Output_Table  30.00 Min
 ;1 131 L
@@ -41,7 +41,7 @@
 ;%
 
 MODE 1
-SCAN RATE 1.0000
+SCAN RATE 60.0000
 
 1:P10
 1:1

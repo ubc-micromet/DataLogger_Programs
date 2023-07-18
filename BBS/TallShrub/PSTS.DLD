@@ -8,8 +8,8 @@
 
 ;%
 ;Final Storage Label File for:  PSTS.SCW
-;Date:  4/4/2023
-;Time:  13:15:39
+;Date:  7/18/2023
+;Time:  16:30:21
 ;
 ;111 Output_Table  30.00 Min
 ;1 111 L
@@ -43,7 +43,7 @@
 ;%
 
 MODE 1
-SCAN RATE 1.0000
+SCAN RATE 60.0000
 
 1:P10
 1:1
