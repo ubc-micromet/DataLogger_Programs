@@ -1,0 +1,202 @@
+'CR1000
+'UBC Micromet
+'June Skeeter
+'Datalogger Program for CR 1000 - EC Tower
+'Started Mar 14, 2023
+'
+'
+'Output Tables
+'FLUX : Fast turbulence sensors (CSAT3 / IRGA) at 20 Hz
+'MET : Slow meteorological sensors (LI190, - possibly adding CR1 Radiometer and heat flux plates)
+'SUMMARY : Daily Battery Status
+'
+
+
+'##################
+'# CR1000 Wiring  #
+'##################
+'-------------------------DATALOGGER PANEL--------------------------
+' 1H  - [orange] - HMP T sig
+' 1L  - [green] - HMP RH sig
+' 2H - [red] - Current
+' 2L - [black] - Current
+' 3H - [white] - NRLite
+' 3L - [green] - NRLite
+' 3L - [black - jumper] - NRLite
+' G - [black - jumper] - NRLite
+' G - [brown] - NRLite
+' 4H - [red] - LI200X
+' 4L - [black] - LI200X
+' G - [white] - LI200X
+' G - [clear] - LI200X
+
+' 5H - [red] - V
+' 5L - [black] - V
+' G   - [white,pruple,clear] - HMP Gnd
+' 1EX - [black] - HMP Voltage excitation
+' 12v - [red] - HMP 12v
+' G - [black,white] - LI7500; [black,clear] CSAT3
+' C1 - [grey] - LI7500; [green] CSAT3
+' C2 - [blue] - LI7500; [white] CSAT3
+' C3 - [brown] - LI7500; [brown] CSAT3
+' C4 - [yellow] - HMP Control Port
+
+SequentialMode
+
+StationName(BBS) 'Burns Bog Seedling Reomoval Area
+
+Public PRG_CNT
+Public SYS_RealTime(9)
+
+Public BattV 'From Logger
+Public Current
+Public Voltage 'From Battery
+Public PTemp_C
+Public AirTC
+Public RH
+Public NR_Wm2
+Public SlrW
+Public wind(5)
+Public irga(4)
+
+' Components of wind and irga variables
+Alias wind(1) = Ux
+Alias wind(2) = Uy
+Alias wind(3) = Uz
+Alias wind(4) = Ts
+Alias wind(5) = sonic_diag
+Alias irga(1) = CO2
+Alias irga(2) = H2O
+Alias irga(3) = press
+Alias irga(4) = irga_diag
+
+' Sensor Calicbrations
+Const CALIB_HMP_A1 =  1            'Humidity sensor slope in HMP
+Const CALIB_HMP_A0 =  0            'Humidity sensor offset in HMP
+Const Slow_Cycle = 20              'Restets PRG_CNT counter used to offset Met Meaasurements
+Const Volt_Mult = 1.0              'Determine in the field
+
+Units wind = m/s
+Units Current = amps
+Units Ts = C
+Units sonic_diag = arb
+Units CO2 = mg/m3
+Units H2O = mg/m3
+Units press = kPa
+Units irga_diag = arb
+Units BattV=Volts
+Units Voltage=Volts
+Units PTemp_C=Deg C
+Units AirTC=Deg C
+Units RH=%
+Units NR_Wm2=W/meter^2
+Units SlrW=W/m^2
+
+'Define Data Tables
+DataTable(MET,True,-1)
+	DataInterval(0,30,Min,10)
+  CardOut (0,-1)
+	Average (1,AirTC,IEEE4,False)
+	Average (1,RH,IEEE4,False)
+	Average (1,Current,IEEE4,False)
+	Minimum(1,BattV,IEEE4,False,False)
+	Minimum(1,Voltage,IEEE4,False,False)
+	Average (1,NR_Wm2,IEEE4,False)
+	Average (1,SlrW,IEEE4,False)
+	
+EndTable
+
+DataTable (FLUX,TRUE,-1)
+    DataInterval (0,0,mSec,10)
+    CardOut (0,-1)
+
+    Sample (5,Ux,IEEE4)
+    Sample (4,CO2,IEEE4)
+EndTable
+
+BeginProg
+    SDMSpeed (30)
+    Scan (100,mSec,3,0)
+      CSAT3 (Ux,1,3,91,61)    
+      CS7500 (CO2,1,7,6)
+      CO2 = CO2*44
+      H2O = H2O*0.018
+
+      CallTable FLUX
+
+
+     'Write a file mark to the turbulence time series table every 30 min
+      If ( IfTime(0,30,Min) ) Then ( FileMark(FLUX) )
+
+     RealTime(SYS_RealTime)
+     If (SYS_RealTime(7) < 50000 AND ((SYS_RealTime(6) MOD Slow_Cycle) = 0)) Then (PRG_CNT = 0) 'less than 50 msec reset timing every 5 seconds
+
+       
+       If (PRG_CNT = 6)
+  
+  		'Default CR1000 Datalogger Wiring Panel Temperature measurement 'PTemp_C'
+    		PanelTemp(PTemp_C,250)
+       EndIf
+                  
+       If (PRG_CNT = 7)
+          'HMP35 Temperature & Relative Humidity port on top
+          PortSet(4,1)
+          Therm107(AirTC,1,1,1,0,250,1.0,0.0)
+       EndIf
+    
+       If (PRG_CNT = 8)
+          'HMP35 Relative Humidity & port off top
+          VoltSe(RH,1,mV2500,2,0,0,250,1,0)
+          PortSet(4,0)
+          RH=RH*0.1*CALIB_HMP_A1+CALIB_HMP_A0
+          If AirTC<-30 Then AirTC = NaN
+          If AirTC>50 Then AirTC = NaN
+          If RH>100 AND RH<=108 Then RH=100
+          If RH>108 Then RH = NaN
+          If RH<0 Then RH = NaN
+       EndIf
+                  
+       If (PRG_CNT = 9)
+         ' Charging current
+         VoltDiff (Current,1,mV250,2,True ,0,250,1.0,0)
+       EndIf
+
+       If (PRG_CNT = 10)
+      		'Default CR1000 Datalogger Battery Voltage measurement 'BattV'
+  		   Battery(BattV)
+       EndIf  
+
+       If (PRG_CNT = 13)
+      	 'NR-LITE Net Radiometer (no wind speed correction) measurement 'NR_Wm2'
+         VoltDiff(NR_Wm2,1,mv25,3,True,0,250,66.22516,0)
+       EndIf 
+
+       If (PRG_CNT = 14)
+      	 
+      		'LI200X Pyranometer measurements 'SlrW'
+      		VoltDiff(SlrW,1,mV7_5,4,True,0,250,1,0)
+      		If SlrW<0 Then SlrW=0
+      		'Calculate flux density
+      		SlrW=SlrW*200
+       EndIf 
+       
+       
+       If (PRG_CNT = 11)
+      		'Battery Voltage measurement 'Voltage'
+         VoltDiff (Voltage,1,mV5000,5,True ,0,250,0.01536,0)
+       EndIf      
+       
+
+		
+		
+
+
+
+  		'Call Data Tables and Store Data
+  		CallTable MET
+
+      PRG_CNT = PRG_CNT + 1 'increase counter for timing
+                            
+    NextScan
+EndProg
+

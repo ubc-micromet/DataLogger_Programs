@@ -1,3 +1,7 @@
+# Readme.md
+
+BBS Flux tower is currently running: **BBS_Flux_Tower_10hz_wRad.cr1**
+
 Code for the BBS Site(s) in the Burns Bog 2016 burn zone seedling removal project area.
 
 * The BBS Flux Tower Logs is logged by a CR1000 that runs the BBS_Flux_Tower.cr1 program written using CRBasic.

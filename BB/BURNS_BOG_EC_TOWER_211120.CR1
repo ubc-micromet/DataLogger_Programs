@@ -1,0 +1,1214 @@
+'CR1000
+'University of British Columbia
+'Department of Geography 
+'Datalogger Program for CR 1000 - EC Tower
+'
+' 20211120 ZN
+'  - Removed savedProcessTimes table and associated calculations after having
+'    some issues with the system data saving.
+'  - removed CSAT and LI7500 sampling and slowed down the sampling from 100ms to 500ms
+'    that fixed a bunch of missing samples and timing errors.
+' 20211119 ZN
+' - Changed voltage ranges for TC, current and DC voltage measurements. They were too wide.
+' 20211118 (after 24V battery bank installation) ZN
+' - removed battery bank 2 measurements from the program (commented out)
+' - entered proper voltage divider parameters for the 24V battery bank (13.9353 instead of 7.96)
+' - fixed up (commented out) a bunch (>8) compiler warnings. 
+'   Mostly were due to declared by not used variables
+' 20200922 RK
+' - no major changes, only updated relay labels and added AMSPEC_OFF declaration as it was coming up as a compile error
+' 
+' 20181206    RK
+' - added instruction for SR-50 to measure height of bog, output to new variable MET_Bog_Height
+'
+' 20180307 RK
+' - replaced coefficients for soil heat flux plate #1. Old sensor stopped working
+'
+' 20180209 RK
+' - Removed instruction for faulty cup and vane wind sensor.  Added instruction for new Young 05103 sensor
+'   output data to existing wind direction and wind speed variables
+' - added instruction for new barometric pressure sensor, output to new variable MET_Barom_Press_kPa
+'
+' 20171027 RK
+' - removed instruction for old water depth sensor, freed up ch 7 DE, 8 DE
+' - added instruction for new CSI OTT PLS water depth sensor C5
+' - Move HMP control from C5 to C6. C6 was freed up in 20151105 version
+' - C5 is now for SDI instruction (can only go on 1,3,5 or 7)
+'
+' 20151105 RK
+' - Changed modem control instructions to use relay module paramter Modem_Off
+' - Added LeaveModemAlone variable to allow user over-ride of timed modem control
+'
+' 20151022 ZN
+' - Noticed that ProcessTimes were saved at 10Hz as oposed to every 30 minutes.  
+'   This has slowed down the program and made it skip many samples.  
+'
+' 20151014 ZN
+' - Added option to only run AMSPEC during user-selected days of the week.
+'   This is a power-saving feature that is supposed to limit the average power
+'   used by this system.
+' - added data table containing the maximum and average times for ProcessTimes. This could
+'   help when troubleshooting why we still lose a bit of data.
+'
+' 20150918 ZN
+' - edited and tested automated scheduling of AMSPEC power ON/OFF.
+' - found out that the getting the Status. variables (Watchdog and such)
+'   creates skipped samples (360 samples per each 30-minute period).
+'   These variables should be sampled and stored
+'   only once per day to minimize the data loss. Fixed: It now runs once per
+'   30 minutes.
+' - Found another cause of sample skipping and fixed it.
+'   Changed integrating option for this line:
+'      BrFull(RAW_WaterLevelBr2,1,mV25,8,2,1,1540,True,True,0,_60,0.5,0)
+'   to
+'      BrFull(RAW_WaterLevelBr2,1,mV25,8,2,1,1540,True,True,0,250,0.5,0)
+'   to avoid sample skipping
+' 20150903 RK
+' - add instructions to set and control Amspec start/stop time
+' - New Variables Amspec_On_Time, Amspec_Off_Time
+'
+' 20150728 NL
+' - corrected the labels of redox sensors
+'
+' 20150604 NL and RK
+' - Add relay module
+' - Add variables of second power box
+'
+' 20150423 NL
+' - Move DCcurrent and DCvoltage to AM25T
+' - Use BrFull to measure pressure transducer on CR1000 (&H, 8H, VX2)
+'
+' 20150420 NL
+' - Correct the conversion of the Tipping bucket (0.25 to 0.1)
+'
+' ' 20150413 AC and NL
+' - Correct the setting of SHFP (type T to -1)
+' - Added Water Pressure Transducers
+' - Added Redox Sensors and Water Temperatures
+'
+' 20150407 AC and NL
+' - add DCCurrent, PARin, and PARout
+'
+' 20141201 RK
+' - set port for both HMP's to Port 5 to free up port 6 for modem power control
+' - port 6 (Modem) controlled by If Time statement. Modem is on for 10 minutes every 4 hrs.
+' - remove instructions for IRGA power reset. Only needed with bad IRGA that is now fixed
+'	• Set up Logger
+'		 IP: 192.168.20.22
+'		 GW: 192.168.20.1
+
+'#######################
+'#  BURNS BOG EC TOWER #
+'#######################
+'
+'Output Tables
+'TUR : Fast turbulence sensors (CSAT3 / IRGA)at 10 Hz
+'MET : Slow meteorological sensors (physical values)
+'RAW : Slow meteorological sensors (raw values)
+'
+'MET already includes physical values after calibrations and data checks. RAW is a backup
+'of the measured voltages without any processing.
+'
+'##################
+'# CR1000 Wiring  #
+'##################
+'-------------------------DATALOGGER PANEL--------------------------
+' 1H  - [blu] to AM25T HI
+' 1L  - [wht-blu] to AM25T LO
+' G   -
+' 2H  - HI pin  {4WPB100}
+' 2L  - LO pin  {4WPB100} L [red] CNR-1 Net Radiometer Pt100
+' G   - GND pin {4WPB100} G [blu] CNR-1 Net Radiometer Pt100
+' 3H  - [yel] CNR-1 Net Radiometer Pt100
+' G   - [white] Young 05103 (WD ref)
+' 4H  - [grn] Young 05103 (WD Sig)
+' 4L  - [grn] CS616 Water Content Reflectometer (Sig)
+' AG  - [clear] CS616 Water Content Reflectometer (Shield)
+' VX1 - [bwn] to AM25T EX
+' AG  - [wht/bwn] to AM25T AG
+' P1  - [Red] Young 05103 (WS Sig)
+' AG  - [Blk/Clr] Young 05103 (Gnd)
+' P2  - [blk] Rain Tipping Bucket
+' AG  - [wht] Rain Tipping Bucket
+'-------------------------------------------------------------------
+' 5H  - [ora] - HMP (2m) T sig
+' 5L  - [grn] - HMP (2m) RH sig
+' G   - [wht,vio] - (2m) HMP Gnd
+' 3L  - [grn] CNR-1 Net Radiometer Pt100
+' 6H  - [ora] - HMP (30cm) T sig
+' 6L  - [grn] - HMP (30cm) RH sig
+' G   - [wht,vio] - (30cm) HMP Gnd
+' 7H, 13SE - [blu] - PTB110/CS106 (BP sig)
+' 7L  - 
+' AG  - [yel,blk] - PTB110/CS106 (BP ref)
+' 8H  - 
+' 8L  - 
+' AG  - 
+' VX2 - [blk] - 2 x HMP Exc T top (2m) and HMP Exc T bottom (30cm) and [pur] WaterPrs excitation
+' AG  -
+' VX3 - [blk] to {4WPB100} AND [Blu] Young 05103 (WD Exc)
+'-------------------------------------------------------------------
+' G   - [clear] - 2 x HMP gnd
+' 5V  - [grn] - PTB110/CS106 (BP trg)
+' G   - [shield] OTT PLS water depth sensor
+' SW12V - [red] control for relay to cycle Licor power
+' G   - [blk] CS616 Water Content Reflectometer (Power 12V-)/[blu] OTT PLS water depth sensor
+' G   - [wht,clr] SR-50 bog height
+' 12V - [red] - HMP power (2m) / [red] - HMP power (30cm) / relay power / [red] - PTB110/CS106 (BP pwr)
+' 12V - [red] CS616 Water Content Reflectometer (Power 12V+), [red] OTT PLS water depth sensor
+' 12V - [red] SR-50 power
+' G - [clr, wht, blk] SR-50 
+' G   - {SDM Ground} -> [blk] Li7500 / [blk] CSAT3
+' C1  - {SDM Data}   -> [gry] Li7500 / [grn] CSAT3 / [grn] relay
+' C2  - {SDM Clock}  -> [blu] Li7500 / [wht] CSAT3 / [wht] relay
+' C3  - [SDM Enable} -> [brn] Li7500 / [red] CSAT3 / [blu] relay
+' C4  - [org] CS616 Water Content Reflectometer (SW Pwr)
+' G   - [shield] - PTB110/CS106 (BP gnd)
+' C5  - [gry] SDI-12 OTT PLS water depth sensor (address 0), [grn] SDI-12 for SR-50 bog height (address 1)
+' C6  - [yel] HMP control (2m) / [yel] HMP control (30cm) Moved from C5 20171027
+' C7  - [wht-grn] to AM25T CLK
+' C8  - [grn] to AM25T RES
+' G   -
+'-------------------------------------------------------------------
+
+'##################
+'# AM25T Wiring  #
+'##################
+'-------------------------MULTIPLEXER PANEL--------------------------
+' +12 - [ora] to datalogger 12 V
+' G   - [wht-ora] to datalogger GND
+' CLK - [wht-grn] to datalogger C7
+' RES - [grn] to datalogger C8
+' EX  - [bwn] to datalogger VX3
+' AG  - [wht-bwn] to datalogger AG
+' HI  - [blu] to datalogger 1H
+' LO  - [wht-blu] to datalogger 1L
+' 1H  - [red] CNR-1 Net Radiometer (CM3 in +)
+' 1L  - [blu] CNR-1 Net Radiometer (CM3 in -)
+' G   -
+' 2H  - [wht] CNR-1 Net Radiometer (CM3 out +)
+' 2L  - [blk] CNR-1 Net Radiometer (CM3 out -)
+' G   -
+' 3H  - [gry] CNR-1 Net Radiometer (CG3 in +)
+' 3L  - [yel] CNR-1 Net Radiometer (CG3 in -)
+' G   -
+' 4H  - [brw] CNR-1 Net Radiometer (CG3 out +)
+' 4L  - [grn] CNR-1 Net Radiometer (CG3 out +)
+' G   -
+' 5H  - [blu] Soil Thermocouple 1
+' 5L  - [red] Soil Thermocouple 1
+' G   -
+' 6H  - [blu] Soil Thermocouple 2
+' 6L  - [red] Soil Thermocouple 2
+' G   -
+' 7H  - [blu] Soil Thermocouple 3
+' 7L  - [red] Soil Thermocouple 3
+' G   -
+' 8H  - [---] Soil HFP 1 (1504)
+' 8L  - [---] Soil HFP 1 (1504)
+' G   -
+' 9H  - [---] Soil HFP 2 (F579)
+' 9L  - [---] Soil HFP 2 (F579)
+' G   -
+' 10H  - [---] Soil HFP 3 (F695)
+' 10L  - [---] Soil HFP 3 (F695)
+' G   -
+' 11H  - [blu] Battery Box TC
+' 11L  - [red] Battery Box TC
+' G   -
+' 12H  - [blu] Power Box TC
+' 12L  - [red] Power Box TC
+' G   -
+' 13H  - [red] PAR Sensor in
+' 13L  - [blk] PAR Sensor in
+' G   -
+' 14H  - [wht] PAR Sensor out
+' 14L  - [grn] PAR Sensor out
+' G    -
+' 15H  - [blu] Water Temperature Thermocouple 10cm High
+' 15L  - [red] Water Temperature Thermocouple 10cm Low
+' G    -
+' 16H  - [---] Water Temperature Thermocouple 30cm High
+' 16L  - [---] Water Temperature Thermocouple 30cm Low
+' G    - [brn] ORP Water Redox Sensor Ground 10cm
+' 17H  - [red] ORP Water Redox Sensor High 10cm
+' 17L  - [grn] ORP Water Redox Sensor Low 10cm
+' G    - [brn] ORP Water Redox Sensor Ground 30cm
+' 18H  - [red] ORP Water Redox Sensor High 30cm
+' 18L  - [grn] ORP Water Redox Sensor Low 30cm
+' G    -                                                ####Old setting: G    - [blu] Water Pressure Transducer Ground
+' 19H  - Power Box Battery DC Current High (MAX 2.5V)   ####Old setting: 19H  - [yel] Water Pressure Transducer 1H
+' 19L  - Power Box Battery DC Current Low (GND)         ####Old setting: 19L  - [blk] Water Pressure Transducer 1L
+' G    -                                                ####Old setting: G    - [wht] Water Pressure Transducer Ground
+' 20H  - Power Box Batt Volt (MAX 5V)                   ####Old setting: 20H  - [red] Water Pressure Transducer 2H
+' 20L  - Power Box Batt Volt (GND)                      ####Old setting: 20L  - [grn] Water Pressure Transducer 2L
+' G    -
+' 21H  - [blu] Battery Box2 TC
+' 21L  - [red] Battery Box2 TC
+' G   -
+' 22H  - [blu] Power Box2 TC
+' 22L  - [red] Power Box2 TC
+' G    -
+' 23H  - Power Box2 Battery DC Current High (MAX 2.5V)
+' 23L  - Power Box2 Battery DC Current Low (GND)
+' G    -
+' 24H  - Power Box2 Batt Volt (MAX 5V)
+' 24L  - Power Box2 Batt Volt (GND)
+
+
+SequentialMode
+
+StationName(BB) 'Burns Bog
+
+'########################################
+'# Define constants                     #
+'########################################
+' Don't use. Use Public instead.  Program is recompilled every time
+' these constants change.  That could erase data.  See help.
+'ConstTable ' these can be changed by user from interface
+'Const Amspec_On_Time = 330   ' minutes into day,  5:30 PST
+'Const Amspec_Off_Time = 1200 ' minutes into day, 20:00 PST
+'EndConstTable
+
+'SDM addresses
+Const SYS_SDM_CSAT  = 1 ' SDM ADDRESS for CSAT-3
+Const SYS_SDM_LICOR = 7 ' SDM ADDRESS for Li-7500
+
+'Measurement Rate                    '10 Hz
+Const SYS_HF_SCAN_INTERVAL = 500     '100 (mSec) scan rate of sonic / licor
+Const SYS_SLOW_SCAN_INTERVAL = 10    'slow sensors in seconds
+
+'Output Period
+Const SYS_OUTPUT = 5                 'Output of slow meteorological sensors in minutes
+
+Const CSAT_OPT = INT (61)            '60 Hz oversampling with 10 (Hz) output
+Const ANASYS_DELAY = INT (300/SYS_HF_SCAN_INTERVAL+1) '4 (3 scan delay)  7 (6 scan delay)
+Const CSAT_DELAY = INT (ANASYS_DELAY-2)               '2 (1 scan delay)  5 (4 scan delay)
+
+'Sensor calibrations
+Const CALIB_CNR1_CM3           =  113.73       'Sensor sensitivity (W m^-2)/mV for CNR-1 061122 CM3 (06.01.2011)
+Const CALIB_CNR1_CG3           =  113.74       'Sensor sensitivity (W m^-2)/mV for CNR-1 061122 CG3 (06.01.2011)
+Const CALIB_HMP_A1             =  1            'Humidity sensor slope in HMP
+Const CALIB_HMP_A0             =  0            'Humidity sensor offset in HMP
+Const CALIB_HFP1in             =  6.372       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr 1504
+Const CALIB_HFP1out            =  6.372       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV 1" white sqr 1504
+Const CALIB_HFP2in             =  72.413       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV Middleton F579 (15.08.2012)
+Const CALIB_HFP2out            =  61.142       'Soil Heat Flux Plate sensitivity in (W m^-2)/mV Middleton F579 (15.08.2012)
+Const CALIB_HFP3in             =  49.7512      'Soil Heat Flux Plate sensitivity in (W m^-2)/mV Middleton F695 (01.12.1977)
+Const CALIB_HFP3out            =  50.2513      'Soil Heat Flux Plate sensitivity in (W m^-2)/mV Middleton F695 (01.12.1977)
+Const CALIB_RAIN               =  0.1          'Tipping bucket mm per tip
+Const CALIB_PARin              =  287.59       'microV micromol-1 m2 s (PAR in, Q21634)
+Const CALIB_PARout             =  290.93       'microV micromol-1 m2 s (PAR out Q20855)
+Const CALIB_pH_Offset_10cm      =  7.00         'offset of pH sensor
+Const CALIB_pH_Offset_30cm     =  7.00         'offset of pH sensor
+Const CALIB_WaterLevel_Mult    =  41.68        'multiplier for water pressure level in cm / mV
+Const CALIB_WaterLevel_Off     =  3.23        'offset for water pressure level in cm
+
+'Natural Constants
+Const SIGMA   = 5.67e-8          'Stefan Boltzmann constant [W/(m^2 K^4)]
+Const R       = 8.3143e-3        'Universal gas constant [(kP m^3)/(K mol)].
+Const K_TO_C  = 273.15           'Conversion from deg C to K
+Const Ref_Temp = 273.15         '0 deg C is the ref temp for the SR-50 sensor used for Bog Height measurement
+
+'Program Constants
+Const SDM_PER = 30               'Default SDM clock speed, 30 uSec bit period.
+
+'########################################
+'# Variables for meteorological sensors #
+'########################################
+
+' Flags for relay module (sdm-cd16ac)
+Public Flag(16) As Boolean
+Alias Flag(1) = Modem_OFF
+Alias Flag(2) = Li7550_OFF
+Alias Flag(3) = CSAT_OFF
+Alias Flag(4) = DD
+Alias Flag(5) = Logger_OFF 'Note the relay board is bypassed for logger due to bad relay #5
+Alias Flag(6) = FF
+Alias Flag(7) = Li7700_IRGA_OFF
+Alias Flag(8) = HH
+Alias Flag(9) = II
+Alias Flag(10) = JJ   ' used to be CO2_closeIRGA (Sep 14, 2016)
+Alias Flag(11) = KK
+Alias Flag(12) = Li7200_pump_off
+Alias Flag(13) = MM
+Alias Flag(14) = NN
+Alias Flag(15) = OO
+Alias Flag(16) = PP
+Public I
+Dim CD16_Output(16)
+
+' Amspec on/off time control
+Public Amspec_On_Time As Long   ' minutes into day,  5:30 PST
+Public Amspec_Off_Time As Long ' minutes into day, 20:00 PST
+Public LeaveAmspecAlone As Boolean ' do not use timed control of AMSPEC power
+Public LeaveModemAlone As Boolean  ' do not use timed control of Modem power
+Public AMSPEC_OFF As Boolean 
+Public minutes As Long
+Public runAMSPEConThisDay(7) As Boolean ' flags for days of week (1-Sunday)
+Alias runAMSPEConThisDay(1) = runAMSPEC_on_Sun
+Alias runAMSPEConThisDay(2) = runAMSPEC_on_Mon
+Alias runAMSPEConThisDay(3) = runAMSPEC_on_Tue
+Alias runAMSPEConThisDay(4) = runAMSPEC_on_Wed
+Alias runAMSPEConThisDay(5) = runAMSPEC_on_Thu
+Alias runAMSPEConThisDay(6) = runAMSPEC_on_Fri
+Alias runAMSPEConThisDay(7) = runAMSPEC_on_Sat
+
+Dim countDays As Long                    ' counter
+
+'Bog Height Measurement using SR-50 snow depth sensor----------------------------
+
+Public MET_HMP_T_2m_K     ' 2 m HMP air temp in deg K
+Public MET_Bog_Height
+Public RAW_Bog_Height
+'Public Mult							' dummy variable
+Units MET_HMP_T_2m_K = deg k
+Units MET_Bog_Height = cm
+
+'Net Radiometer (CNR-1) ----------------------------------------------------------------------------
+
+Public RAW_CNR1_SWi
+Public RAW_CNR1_SWo
+Public RAW_CNR1_LWi
+Public RAW_CNR1_LWo
+Public RAW_CNR1_R
+Units  RAW_CNR1_SWi = mV
+Units  RAW_CNR1_SWo = mV
+Units  RAW_CNR1_LWi = mV
+Units  RAW_CNR1_LWo = mV
+Units  RAW_CNR1_R   = unitless
+
+Public MET_CNR1_SWi
+Public MET_CNR1_SWo
+Public MET_CNR1_LWi
+Public MET_CNR1_LWo
+Public MET_CNR1_TC
+Public MET_CNR1_TK
+Public MET_CNR1_Net
+Public MET_CNR1_Alb
+Units  MET_CNR1_SWi = W/m2
+Units  MET_CNR1_SWo = W/m2
+Units  MET_CNR1_LWi = W/m2
+Units  MET_CNR1_LWo = W/m2
+Units  MET_CNR1_TC  = Deg C
+Units  MET_CNR1_TK  = k
+Units  MET_CNR1_Net = W/m2
+Units  MET_CNR1_Alb = unitless
+
+'Air Tempeature and Humidity (HMP 45) --------------------------------------------------------------
+
+Public RAW_HMP_T_2m
+Public RAW_HMP_RH_2m
+Units  RAW_HMP_T_2m  = Deg C
+Units  RAW_HMP_RH_2m = %
+
+Public RAW_HMP_T_30cm
+Public RAW_HMP_RH_30cm
+Units  RAW_HMP_T_30cm  = Deg C
+Units  RAW_HMP_RH_30cm = %
+
+Public MET_HMP_T_2m
+Public MET_HMP_RH_2m
+Units  MET_HMP_T_2m  = Deg C
+Units  MET_HMP_RH_2m = %
+
+Public MET_HMP_T_30cm
+Public MET_HMP_RH_30cm
+Units  MET_HMP_T_30cm  = Deg C
+Units  MET_HMP_RH_30cm = %
+
+'Wind Speed and Direction (Young Wind Sentry) ------------------------------------------------------
+
+Public RAW_Young_WS
+Public RAW_Young_WD
+Units  RAW_Young_WS = Pulses
+Units  RAW_Young_WD = mV
+
+Public MET_Young_WS
+Public MET_Young_WD
+Units  MET_Young_WS = m/s
+Units  MET_Young_WD = Deg
+
+'Soil Temperatures (Type T Thermocouples) ----------------------------------------------------------
+
+Public MET_SoilT(3)
+Units  MET_SoilT           = Deg C
+Alias  MET_SoilT(1) = MET_SoilT_5cm
+Alias  MET_SoilT(2) = MET_SoilT_10cm
+Alias  MET_SoilT(3) = MET_SoilT_50cm
+
+'Soil Volumetric Water Content (CS616) -------------------------------------------------------------
+
+Public MET_616_VolW
+Units  MET_616_VolW = m3/m3
+Public RAW_616_PAuS
+Units  RAW_616_PAuS = uSec
+
+'Water Temperature next to ORP sensor -------------------------------------------------------------
+
+Public MET_WaterT_10cm
+Units  MET_WaterT_10cm = Deg C
+Public MET_WaterT_30cm
+Units  MET_WaterT_30cm = Deg C
+
+'Water Redox Potential and pH (ORP sensor) --------------------------------------------------------
+
+Public RAW_WaterORP_10cm
+Units  RAW_WaterORP_10cm = mV
+Public MET_WaterORP_10cm
+Units  MET_WaterORP_10cm = mV
+Public MET_WaterPH_10cm
+Units  MET_WaterPH_10cm = pH
+Public SYS_pHMult_10cm
+
+Public RAW_WaterORP_30cm
+Units  RAW_WaterORP_30cm = mV
+Public MET_WaterORP_30cm
+Units  MET_WaterORP_30cm = mV
+Public MET_WaterPH_30cm
+Units  MET_WaterPH_30cm = pH
+Public SYS_pHMult_30cm
+
+'Water Level (Pressure Transducer) ----------------------------------------------------------------
+'  Modified to measure CSI OTT PLS sensor Oct 26, 2017 RK. This sensor also measures water temp
+
+'Public RAW_WaterLevelBr1
+'Units  RAW_WaterLevelBr1 = mV
+'Public RAW_WaterLevelBr2
+'Units  RAW_WaterLevelBr2 = mV
+Public MET_OTT_PLS(2)
+Alias  MET_OTT_PLS(1) = MET_WaterLevel
+Alias  MET_OTT_PLS(2) = MET_PLS_Water_Temp
+Units  MET_WaterLevel = cm
+Units  MET_PLS_Water_Temp = Deg C
+
+'Soil Heat Flux Plates -----------------------------------------------------------------------------
+
+Public MET_SHFP_1
+Units  MET_SHFP_1       = W/m2
+Public MET_SHFP_2
+Units  MET_SHFP_2       = W/m2
+Public MET_SHFP_3
+Units  MET_SHFP_3       = W/m2
+
+Public RAW_SHFP_1
+Units  RAW_SHFP_1 = mV
+Public RAW_SHFP_2
+Units  RAW_SHFP_2 = mV
+Public RAW_SHFP_3
+Units  RAW_SHFP_3 = mV
+
+'Rain Gauge ----------------------------------------------------------------------------------------
+
+Public MET_RainTips
+Units  MET_RainTips = mm
+Public RAW_RainTips
+Units  RAW_RainTips = Pulses
+
+'PAR-----------------------------------------------------------------------------------------------
+
+Public MET_PARin
+Units  MET_PARin = micromol/(m2s)
+Public RAW_PARin
+Units  RAW_PARin = mV
+Public MET_PARout
+Units  MET_PARout = micromol/(m2s)
+Public RAW_PARout
+Units  RAW_PARout = mV
+
+' Barometric Pressure  ----------------------------------------------------------------------------
+Public MET_Barom_Press_mB
+Units MET_Barom_Press_mB = mB
+Public MET_Barom_Press_kPa
+Units MET_Barom_Press_kPa = kPa
+
+'Datalogger and System Status ----------------------------------------------------------------------
+
+Public SYS_CR1000_Batt_Volt
+Units  SYS_CR1000_Batt_Volt       = V
+Public SYS_PanelT_CR1000
+Units  SYS_PanelT_CR1000   = Deg C
+Public SYS_PanelT_AM25T_loop
+Units  SYS_PanelT_AM25T_loop = Deg C
+Public SYS_PanelT_AM25T
+Units  SYS_PanelT_AM25T = Deg C
+Public SYS_AMT25T_empty
+Public SYS_RealTime(9)
+Alias SYS_RealTime(1) = SYS_Year
+Alias SYS_RealTime(2) = SYS_Month
+Alias SYS_RealTime(3) = SYS_Day
+Alias SYS_RealTime(4) = SYS_Hour
+Alias SYS_RealTime(5) = SYS_Minute
+Alias SYS_RealTime(6) = SYS_Second
+Alias SYS_RealTime(7) = SYS_Microsecond
+Alias SYS_RealTime(8) = SYS_DayOfWeek
+Alias SYS_RealTime(9) = SYS_DayOfYear
+
+Public SYS_Batt_DCCurrent
+Units  SYS_Batt_DCCurrent = A
+Public SYS_PBox_Batt_Volt
+Units  SYS_PBox_Batt_Volt = V
+Public SYS_BatteryBoxTC
+Units  SYS_BatteryBoxTC = Deg C
+'Public SYS_Batt_DCCurrent2
+'Units  SYS_Batt_DCCurrent2 = A
+'Public SYS_PBox_Batt_Volt2
+'Units  SYS_PBox_Batt_Volt2 = V
+'Public SYS_BatteryBoxTC2
+'Units  SYS_BatteryBoxTC2 = Deg C
+'Public SYS_PowerBoxTC2
+'Units  SYS_PowerBoxTC2 = Deg C
+Public SYS_PowerBoxTC
+Units  SYS_PowerBoxTC = Deg C
+Public SYS_WatchdogErrors
+Public SYS_SkippedRecords
+Public SYS_ProcessTime
+Public SYS_MaxProcessTime
+
+'########################################
+'# Variables for turbulence sensors     #
+'########################################
+
+'CSAT3 variables with additional one or four scan delay, from the Data Table csatbuf.
+Public CSAT3(5)                   'Wind, temperature, and diagnostic data from CSAT3.
+Alias CSAT3(1)  = CSAT_Ux
+Alias CSAT3(2)  = CSAT_Uy
+Alias CSAT3(3)  = CSAT_Uz
+Alias CSAT3(4)  = CSAT_Ts
+Alias CSAT3(5)  = CSAT_Dia
+Units CSAT3     = m/s
+Units CSAT_Ts   = C
+Units CSAT_Dia  = unitless
+
+'LI-7500 has a fixed delay of 302.369 mSec (three scans at 10 Hz or six scans at 20 Hz).
+Public IRGA(6)              'Co2, h2o, MET_MET_IRGA_PRSure, and diagnostic from the LI-7500.
+Alias IRGA(1)   = IRGA_CO2
+Alias IRGA(2)   = IRGA_H2O
+Alias IRGA(3)   = MET_IRGA_PRS
+Alias IRGA(4)   = IRGA_Dia
+Alias IRGA(5)   = IRGA_CO2m
+Alias IRGA(6)   = IRGA_H2Om
+Units IRGA_CO2  = mg/m^3
+Units IRGA_H2O  = g/m^3
+Units MET_IRGA_PRS  = kPa
+Units IRGA_Dia  = unitless
+
+Public Diag_B(9) 'Warning flags.
+Alias Diag_B(1) = CSAT_del_T_f    'Delta temperature warning flag.
+Alias Diag_B(2) = CSAT_track_f    'Tracking (signal lock) warning flag.
+Alias Diag_B(3) = CSAT_amp_h_f    'Amplitude high warning flag.
+Alias Diag_B(4) = CSAT_amp_l_f    'Amplitude low warning flag.
+Alias Diag_B(5) = IRGA_chopp_f    'Chopper warning flag.
+Alias Diag_B(6) = IRGA_dtctr_f    'Detector warning flag.
+Alias Diag_B(7) = IRGA_pll_f      'PLL warning flag.
+Alias Diag_B(8) = IRGA_sync_f     'Synchronization warning flag.
+Alias Diag_B(9) = IRGA_AGC        'Automatic gain control.
+Units Diag_B    = samples
+Units IRGA_AGC  = unitless
+
+'Diagnostic variables.
+'Dim disable_flag_on(4)      'Intermediate processing disable.
+'disable_flag_on(1)     'Set high when CSAT3 diagnostic warning flags are on or CSAT3 has no data.
+'disable_flag_on(2)     'Set high when LI-7500 diagnostic warning flags are on or LI-7500 failed to send data.
+'disable_flag_on(3)     'Set high when CSAT3 diagnostic warning flags are on.
+'Used to filter the sum of CSAT3 diagnostic warning flags.
+'disable_flag_on(4)     'Set high when LI-7500 diagnostic warning flags are on.
+'Used to filter the sum of LI-500 diagnostic warning flags.
+Dim n                       'Number of samples in the on-line covariances.
+Units n = samples
+
+'Program Control flags.
+Public PRG_CNT
+
+'Dim IRT_Psb
+'Dim IRT_Ksb
+'Dim IRT_Hsb
+'Dim IRT_Sec
+
+'Misc timing variables used to troubleshoot timing issues
+'Public ProcessTimes(50)
+
+
+'Measurement variables without delays.
+Dim CSAT_in(5)              'CSAT3 data, before adding delay.
+
+'Arrays to store delayed data.
+'Dim csat_data(5)            'One or four scan old data from the Data Table csatbuf.
+
+'Working variables.
+'Dim co2_mm_m3               'Carbon dioxide concentration [mmol/m^3], used to compute umol/mol concentration.
+'Dim h2o_mm_m3               'Water vapor concentration [mmol/m^3], used to compute vapor MET_IRGA_PRSure and mmol/mol concentration.
+'Dim j                       'Counter variable.
+Dim scan_count              'Counts the number scans that have been executed.
+'Dim even_min_flag_on        'Used to synchronize the time series output to the even minute.
+
+'Licor Power reset variables
+'Public First_Pass,Timer1
+'Public Li_Reset_Count 'number of Licor resets
+'Public SYS_LICOR_RESET_FLG 'if high, Licor power relay switch is On ie. Licor power is off
+'########################################
+'# Final ouput tables                   #
+'########################################
+
+DataTable (TUR,TRUE,2000) ' field setting: 36000
+
+  DataInterval (0,SYS_HF_SCAN_INTERVAL,mSec,0)      'Time stamp every record.
+  CardOut(0,36000*48*20)                            'Ring memory.
+  Sample (5,CSAT3(1),IEEE4)                         'CSAT-data, raw (Ux, Uy, Uz, Ts, diag_csat).
+  Sample (2,IRGA(1),IEEE4)                          'LiCor-data, raw (co2, h2o).
+  Sample (1,IRGA_Dia,IEEE4)                         'LiCor diagnostic flags
+
+EndTable
+
+DataTable(MET,true,10*60*5)   'field setting: 20*60*5
+
+  DataInterval(0,SYS_OUTPUT,Min,0)
+  CardOut(0,-1)
+
+  Average(1,MET_Bog_Height,IEEE4,False)
+  Average(1,MET_Barom_Press_kPa,IEEE4,False)
+  Average(1,MET_HMP_T_2m,IEEE4,False)
+  Average(1,MET_HMP_RH_2m,IEEE4,False)
+  Average(1,MET_HMP_T_30cm,IEEE4,False)
+  Average(1,MET_HMP_RH_30cm,IEEE4,False)
+  Average(1,MET_CNR1_SWi,IEEE4,False)
+  Average(1,MET_CNR1_SWo,IEEE4,False)
+  Average(1,MET_CNR1_LWi,IEEE4,False)
+  Average(1,MET_CNR1_LWo,IEEE4,False)
+  Average(1,MET_CNR1_Net,IEEE4,False)
+  Average(1,MET_CNR1_Alb,IEEE4,False)
+  Average(1,MET_CNR1_TC,IEEE4,False)
+  Average(1,MET_PARin,IEEE4,False)
+  Average(1,MET_PARout,IEEE4,False)
+  Average(1,MET_Young_WS,IEEE4,False)
+  StdDev (1,MET_Young_WS,IEEE4,False)
+  WindVector(1,MET_Young_WS,MET_Young_WD,IEEE4,False,0,0,0)
+  Average(1,MET_616_VolW,IEEE4,False)
+  Average(1,MET_SHFP_1,IEEE4,False)
+  Average(1,MET_SHFP_2,IEEE4,False)
+  Average(1,MET_SHFP_3,IEEE4,False)
+  Average(1,MET_SoilT(1),IEEE4,False)
+  Average(1,MET_SoilT(2),IEEE4,False)
+  Average(1,MET_SoilT(3),IEEE4,False)
+  Average(1,MET_WaterT_10cm,IEEE4,False)
+  Average(1,MET_WaterT_30cm,IEEE4,False)
+  Totalize(1,MET_RainTips,IEEE4,False)
+  Average(1,MET_WaterLevel,IEEE4,False)
+ 	Average(1,MET_PLS_Water_Temp,IEEE4,False)
+  Average(1,MET_WaterORP_10cm,IEEE4,False)
+  Average(1,MET_WaterORP_30cm,IEEE4,False)
+  Average(1,MET_WaterPH_10cm,IEEE4,False)
+  Average(1,MET_WaterPH_30cm,IEEE4,False)
+  Average(1,MET_IRGA_PRS,IEEE4,False)
+  Average (4,CSAT3(1),IEEE4,False)       'CSAT-data, raw (Ux, Uy, Uz, Ts).
+  Average (2,IRGA(1),IEEE4,False)        'LiCor-data, raw (co2, h2o).
+  Average(1,SYS_CR1000_Batt_Volt,IEEE4,False)
+  Average(1,SYS_PanelT_CR1000,IEEE4,False)
+  Average(1,SYS_PanelT_AM25T,IEEE4,False)
+  Average(1,SYS_BatteryBoxTC,IEEE4,False)
+  Average(1,SYS_PBox_Batt_Volt,IEEE4,False)
+  Average(1,SYS_Batt_DCCurrent,IEEE4,False)
+'  Average(1,SYS_BatteryBoxTC2,FP2,False)
+'  Average(1,SYS_PBox_Batt_Volt2,FP2,False)
+'  Average(1,SYS_Batt_DCCurrent2,FP2,False)
+  Average(1,SYS_PowerBoxTC,IEEE4,False)
+'  Average(1,SYS_PowerBoxTC2,FP2,False)
+'  Average(1,SYS_LICOR_RESET_FLG,FP2,False)
+  Average (1,IRGA_Dia,IEEE4,False)       'LiCor diagnostic flags
+  Sample (1,IRGA_AGC,IEEE4)              '(automatic gain control).
+  Average (1,CSAT3(5),IEEE4,False)       'CSAT-data, raw (Diag).
+
+EndTable
+
+DataTable(RAW,true,10*60*5)   'field setting: 20*60*5
+
+  DataInterval(0,SYS_OUTPUT,Min,0)
+  CardOut(0,-1)
+
+  Average(1,RAW_HMP_T_2m,IEEE4,False)
+  Average(1,RAW_HMP_RH_2m,IEEE4,False)
+  Average(1,RAW_HMP_T_30cm,IEEE4,False)
+  Average(1,RAW_HMP_RH_30cm,IEEE4,False)
+  Average(1,RAW_CNR1_SWi,IEEE4,False)
+  Average(1,RAW_CNR1_SWo,IEEE4,False)
+  Average(1,RAW_CNR1_LWi,IEEE4,False)
+  Average(1,RAW_CNR1_LWo,IEEE4,False)
+  Average(1,RAW_CNR1_R,IEEE4,False)
+  Average(1,RAW_PARin,IEEE4,False)
+  Average(1,RAW_PARout,IEEE4,False)
+  Totalize(1,RAW_Young_WS,IEEE4,False)
+  Average(1,RAW_Young_WD,IEEE4,False)
+  Average(1,RAW_616_PAuS,IEEE4,False)
+  Totalize(1,RAW_RainTips,IEEE4,False)
+  Average(1,RAW_SHFP_1,IEEE4,False)
+  Average(1,RAW_SHFP_2,IEEE4,False)
+  Average(1,RAW_SHFP_3,IEEE4,False)
+  Average(1,RAW_WaterORP_10cm,IEEE4,False)
+  Average(1,RAW_WaterORP_30cm,IEEE4,False)
+'   Average(1,RAW_WaterLevelBr1,IEEE4,False)
+'   Average(1,RAW_WaterLevelBr2,IEEE4,False)
+  StdDev(1,MET_Barom_Press_kPa,IEEE4,False)
+  StdDev(1,RAW_HMP_T_2m,IEEE4,False)
+  StdDev(1,RAW_HMP_RH_2m,IEEE4,False)
+  StdDev(1,RAW_HMP_T_30cm,IEEE4,False)
+  StdDev(1,RAW_HMP_RH_30cm,IEEE4,False)
+  StdDev(1,RAW_CNR1_SWi,IEEE4,False)
+  StdDev(1,RAW_CNR1_SWo,IEEE4,False)
+  StdDev(1,RAW_CNR1_LWi,IEEE4,False)
+  StdDev(1,RAW_CNR1_LWo,IEEE4,False)
+  StdDev(1,RAW_CNR1_R,IEEE4,False)
+  StdDev(1,RAW_Young_WD,IEEE4,False)
+  StdDev (1,MET_IRGA_PRS,IEEE4,False)
+
+  Maximum(1,SYS_WatchdogErrors,IEEE4,False,False)
+  Maximum(1,SYS_SkippedRecords,IEEE4,False,False)
+  Maximum(1,SYS_ProcessTime,IEEE4,False,False)
+  Maximum(1,SYS_MaxProcessTime,IEEE4,False,False)
+
+EndTable
+
+'########################################
+'# Working data tables                  #
+'########################################
+
+'Delay the CSAT3 measurements by one or four scans.
+DataTable (BUFFER,TRUE,CSAT_DELAY)
+  Sample (5,CSAT_in(1),IEEE4)
+EndTable
+
+'########################################
+'DataTable (saveProcessTimes,true,-1)
+
+'  DataInterval(0,30,Min,0)
+'  CardOut(0,-1)
+  
+'  Maximum(50,ProcessTimes,IEEE4,False,1)
+'  average(50,ProcessTimes,IEEE4,False)
+'EndTable
+
+
+'########################################
+'# Program                              #
+'########################################
+
+BeginProg
+
+  n = 1
+
+  'Set all CSAT3 variables to NaN.
+  Move (CSAT_in(1),5,NaN,1)
+
+  'Set all LI-7500 variables to NaN.
+  Move (IRGA(1),4,NaN,1)
+
+  'Set the SDM clock speed.
+  SDMSpeed (SDM_PER)
+
+  'Set user controllable public variables
+  LeaveModemAlone = false
+	LeaveAmspecAlone = true
+  Amspec_On_Time = 500   ' minutes into day,  8:20 PST (9:30 PDT)
+  Amspec_Off_Time = 1030 ' minutes into day, 17:10 PST (18:30 PDT)
+  AMSPEC_OFF = false
+  ' Set AMSPEC to run every day of the week (this can be changed during the run time).
+  For countDays =  1 To 7
+    runAMSPEConThisDay(countDays) = false
+  Next countDays
+
+
+  'High-frequency scan at given interval
+  Scan (SYS_HF_SCAN_INTERVAL,mSec,10,0)
+
+    Timer (1,uSec,2)
+
+    'Get CSAT3 wind and sonic temperature data.
+'    CSAT3 (CSAT_in(1),1,SYS_SDM_CSAT,91,CSAT_OPT)
+
+    'Get LI-7500 data.
+'    CS7500 (IRGA(1),1,SYS_SDM_LICOR,6)
+    'Output option 6 in not described but returns co2 (mg/m^3), h2o (g/m^3),
+    'MET_IRGA_PRS (kPa), diag_irga (unitless)
+
+    'Delay the CSAT3 measurements by one or four scans.
+    CallTable(BUFFER)
+
+    If ( scan_count >= ANASYS_DELAY ) Then
+
+      'Load in CSAT3 measurements that have been delayed by one or four scans.
+      GetRecord (CSAT_Ux,BUFFER,CSAT_DELAY)
+
+      'Swap the LI-7500 diagnostic bit state.
+      IRGA_Dia = IRGA_Dia XOR &h00f0
+
+      'Turn on the intermediate processing disable flag when the LI-7500 has failed to send data to the
+      'CR5000 via SDM.
+      If ( (IRGA_CO2 < -99990) OR (IRGA_CO2 = NaN) ) Then (IRGA_Dia = &h00ff)        'Set all flags high and rail the AGC to 94.
+
+      'Compute the AGC (Automatic Gain Control)
+      IRGA_AGC = INT ((IRGA_Dia AND &h000f) * 6.25 + 0.5)
+
+      'Break up the four LI-7500 warning flags into four separate bits and swap bit state.
+      IRGA_chopp_f = (IRGA_Dia AND &h0080)/&h0080
+      IRGA_dtctr_f = (IRGA_Dia AND &h0040)/&h0040
+      IRGA_pll_f = (IRGA_Dia AND &h0020)/&h0020
+      IRGA_sync_f = (IRGA_Dia AND &h0010)/&h0010
+
+      CallTable(Tur)
+
+      'Write a file mark to the turbulence time series table every 30 min
+      If ( IfTime(0,30,Min) ) Then ( FileMark(TUR) )
+
+    Else
+      scan_count = scan_count+1
+    EndIf
+
+    RealTime(SYS_RealTime)
+    minutes = SYS_RealTime(4)*60+SYS_RealTime(5)
+
+    If (SYS_RealTime(7) < 500000 AND ((SYS_RealTime(6) MOD 25) = 0)) Then 
+            (PRG_CNT = 0) 'less than 500 msec reset timing every 25 seconds
+    EndIf
+    If ((PRG_CNT = 1) AND (SYS_RealTime(6) = 30))
+      'Soil volumetric water content
+      '616 Water Content Reflectometer measurements
+      'PA_uS every min at second 30 only
+      CS616(RAW_616_PAuS,1,8,4,1,1,0)
+      MET_616_VolW=100 * (-0.0663+(-0.0063*RAW_616_PAuS)+(0.0007*RAW_616_PAuS^2))
+    EndIf
+
+    If (PRG_CNT = 3)
+      'Battery Voltage
+      Battery (SYS_CR1000_Batt_Volt)
+    EndIf
+
+    If (PRG_CNT = 4)
+      'Wiring Panel Temperature Logger
+      PanelTemp(SYS_PanelT_CR1000,250)
+      AM25T (SYS_AMT25T_empty,0,mV25,1,1,TypeT,SYS_PanelT_AM25T_loop,7,8,Vx1,False,0,250,1.0,0)
+    EndIf
+
+    If (PRG_CNT = 5)
+      'CNR1 Net Radiometer
+      'Body Temperature
+      BrHalf4W(RAW_CNR1_R,1,mV25,mV25,2,3,1,2100,True,True,0,250,1,0)
+      PRT(MET_CNR1_TC,1,RAW_CNR1_R,1,0)
+      If MET_CNR1_TC > 80 Then MET_CNR1_TC=NaN
+      If MET_CNR1_TC < -50 Then MET_CNR1_TC=NaN
+      MET_CNR1_TK=MET_CNR1_TC+K_TO_C
+    EndIf
+
+    If (PRG_CNT = 6)
+      'CNR1 Net Radiometer
+      'Short-wave in
+      AM25T (RAW_CNR1_SWi,1,mV25,1,1,-1,SYS_PanelT_AM25T_loop,7,8,0,True,0,250,1.0,0)
+      MET_CNR1_SWi=CALIB_CNR1_CM3*RAW_CNR1_SWi
+      If MET_CNR1_SWi<0 Then MET_CNR1_SWi=0
+      If MET_CNR1_SWi>1500 Then MET_CNR1_SWi=NaN
+    EndIf
+
+    If (PRG_CNT = 7)
+      'CNR1 Net Radiometer
+      'Short-wave out
+      AM25T (RAW_CNR1_SWo,1,mV25,2,1,-1,SYS_AMT25T_empty,7,8,0,True,0,250,1.0,0)
+      MET_CNR1_SWo=CALIB_CNR1_CM3*RAW_CNR1_SWo
+      If MET_CNR1_SWo<0 Then MET_CNR1_SWo=0
+      If MET_CNR1_SWo>1500 Then MET_CNR1_SWo=NaN
+      'Calculate Albedo
+      MET_CNR1_Alb=MET_CNR1_SWo/MET_CNR1_SWi
+      If MET_CNR1_SWo <= 0 Then MET_CNR1_Alb=NaN
+      If MET_CNR1_SWi <= 0 Then MET_CNR1_Alb=NaN
+      If MET_CNR1_SWi < MET_CNR1_SWo Then MET_CNR1_Alb=NaN
+    EndIf
+
+    If (PRG_CNT = 8)
+      'CNR1 Net Radiometer
+      'Long-wave in
+      AM25T (RAW_CNR1_LWi,1,mV25,3,1,-1,SYS_PanelT_AM25T_loop,7,8,0,True,0,250,1.0,0)
+      MET_CNR1_LWi=CALIB_CNR1_CG3*RAW_CNR1_LWi
+      MET_CNR1_LWi=MET_CNR1_LWi+SIGMA*MET_CNR1_TK^4
+      If MET_CNR1_LWi>800 Then MET_CNR1_LWi=NaN
+      If MET_CNR1_LWi<50 Then MET_CNR1_LWi=NaN
+    EndIf
+
+    If (PRG_CNT = 9)
+      'PAR in sensor incoming on AM25T (Q21634)
+      AM25T(RAW_PARin,1,mV25,13,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+      MET_PARin = RAW_PARin * CALIB_PARin
+      If MET_PARin<0 Then MET_PARin=0
+      If MET_PARin>2500 Then MET_PARin=NaN
+    EndIf
+
+    If (PRG_CNT = 10)
+      'PAR out sensor incoming on AM25T (Q20855)
+      AM25T(RAW_PARout,1,mV25,14,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+      MET_PARout = RAW_PARout * CALIB_PARout
+      If MET_PARout<0 Then MET_PARout=0
+      If MET_PARout>2500 Then MET_PARout=NaN
+    EndIf
+
+    If (PRG_CNT = 11)
+      'CNR1 Net Radiometer
+      'Long-wave out
+      AM25T (RAW_CNR1_LWo,1,mV25,4,1,-1,SYS_PanelT_AM25T_loop,7,8,0,True,0,250,1.0,0)
+      MET_CNR1_LWo=CALIB_CNR1_CG3*RAW_CNR1_LWo
+      MET_CNR1_LWo=MET_CNR1_LWo+SIGMA*MET_CNR1_TK^4
+      If MET_CNR1_LWo>800 Then MET_CNR1_LWo=NaN
+      If MET_CNR1_LWo<50 Then MET_CNR1_LWo=NaN
+      'Calculate Net Radiation
+      MET_CNR1_Net=MET_CNR1_SWi-MET_CNR1_SWo+MET_CNR1_LWi-MET_CNR1_LWo
+    EndIf
+	
+	   ' New sensor.  RM Young 05103 wind sensor SN 155994. (added Feb 9 2018)
+	  If (PRG_CNT = 12)
+      'Young 05103 - Wind Direction
+      BrHalf (MET_Young_WD,1,mV2500,7,Vx3,1,2500,True,0,_60Hz,355,0)
+      If MET_Young_WD >= 360 Then MET_Young_WD = 0
+      If MET_Young_WD <= 0   Then MET_Young_WD = 0
+    EndIf
+
+'   Faulty sensor.  Instruction removed Feb 2018
+'		If (PRG_CNT = 12)
+'      'Young Wind Sentry - Direction
+'      BrHalf(RAW_Young_WD,1,mV5000,7,3,1,2100,False,0,250,1,0)
+'      MET_Young_WD= (RAW_Young_WD*345.7) - 20
+'      If MET_Young_WD >= 360 Then MET_Young_WD = MET_Young_WD - 360
+'      If MET_Young_WD <= 0   Then MET_Young_WD = MET_Young_WD + 360
+'    EndIf
+
+    If (PRG_CNT = 13)
+      'HMP35 Temperature & Relative Humidity port on top
+      PortSet(6,1)
+      Therm107(RAW_HMP_T_2m,1,9,2,0,250,1.0,0.0)
+    EndIf
+
+    If (PRG_CNT = 14)
+      'HMP35 Relative Humidity & port off top
+      VoltSe(RAW_HMP_RH_2m,1,mV2500,10,0,0,250,1,0)
+      PortSet(6,0)
+      MET_HMP_T_2m=RAW_HMP_T_2m
+      MET_HMP_RH_2m=RAW_HMP_RH_2m*0.1*CALIB_HMP_A1+CALIB_HMP_A0
+      If MET_HMP_T_2m<-30 Then MET_HMP_T_2m = NaN
+      If MET_HMP_T_2m>50 Then MET_HMP_T_2m = NaN
+      If MET_HMP_RH_2m>100 AND MET_HMP_RH_2m<=108 Then MET_HMP_RH_2m=100
+      If MET_HMP_RH_2m>108 Then MET_HMP_RH_2m = NaN
+      If MET_HMP_RH_2m<0 Then MET_HMP_RH_2m = NaN
+    EndIf
+
+    If (PRG_CNT = 15)
+      'HMP35 Temperature & Relative Humidity port on bottom
+      PortSet(6,1)
+      Therm107(RAW_HMP_T_30cm,1,11,2,0,250,1.0,0.0)
+    EndIf
+
+    If (PRG_CNT = 16)
+      'HMP35 Relative Humidity & port off bottom
+      VoltSe(RAW_HMP_RH_30cm,1,mV2500,12,0,0,250,1,0)
+      PortSet(6,0)
+      MET_HMP_T_30cm=RAW_HMP_T_30cm
+      MET_HMP_RH_30cm=RAW_HMP_RH_30cm*0.1*CALIB_HMP_A1+CALIB_HMP_A0
+      If MET_HMP_T_30cm<-30 Then MET_HMP_T_30cm = NaN
+      If MET_HMP_T_30cm>50 Then MET_HMP_T_30cm = NaN
+      If MET_HMP_RH_30cm>100 AND MET_HMP_RH_30cm<=108 Then MET_HMP_RH_30cm=100
+      If MET_HMP_RH_30cm>108 Then MET_HMP_RH_30cm = NaN
+      If MET_HMP_RH_30cm<0 Then MET_HMP_RH_30cm = NaN
+    EndIf
+
+    If (PRG_CNT = 17)
+      'Soil thermocouple 1 on AM25T Channel
+      AM25T(MET_SoilT(1),1,mV25,5,1,TypeT,SYS_PanelT_AM25T_loop,7,8,0,False,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 18)
+      'Soil thermocouple 2 on AM25T Channel
+      AM25T(MET_SoilT(2),1,mV2_5,6,1,TypeT,SYS_PanelT_AM25T_loop,7,8,0,False,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 19)
+      'Soil thermocouple 3 on AM25T Channel
+      AM25T(MET_SoilT(3),1,mV2_5,7,1,TypeT,SYS_PanelT_AM25T_loop,7,8,0,False,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 20)
+      'Soil heat flux plate 1 AM25T Channel
+      AM25T(RAW_SHFP_1,1,mV25,8,1,-1,SYS_AMT25T_empty,7,8,0,True,0,250,1,0)
+      If RAW_SHFP_1 >= 0 Then MET_SHFP_1 = CALIB_HFP1in  * RAW_SHFP_1
+      If RAW_SHFP_1 <  0 Then MET_SHFP_1 = CALIB_HFP1out * RAW_SHFP_1
+    EndIf
+
+    If (PRG_CNT = 21)
+      'Soil heat flux plate 1 AM25T Channel
+      AM25T(RAW_SHFP_2,1,mV25,9,1,-1,SYS_AMT25T_empty,7,8,0,True,0,250,1,0)
+      If RAW_SHFP_2 >= 0 Then MET_SHFP_2 = CALIB_HFP2in  * RAW_SHFP_2
+      If RAW_SHFP_2 <  0 Then MET_SHFP_2 = CALIB_HFP2out * RAW_SHFP_2
+    EndIf
+
+    If (PRG_CNT = 22)
+      'Soil heat flux plate 1 AM25T Channel
+      AM25T(RAW_SHFP_3,1,mV25,10,1,-1,SYS_AMT25T_empty,7,8,0,True,0,250,1,0)
+      If RAW_SHFP_3 >= 0 Then MET_SHFP_3 = CALIB_HFP3in  * RAW_SHFP_3
+      If RAW_SHFP_3 <  0 Then MET_SHFP_3 = CALIB_HFP3out * RAW_SHFP_3
+    EndIf
+
+    If (PRG_CNT = 23)
+      AM25T(SYS_BatteryBoxTC,1,mV2_5,11,1,TypeT,SYS_PanelT_AM25T_loop,7,8,0,True,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 24)
+      'Control thermocouple in Power Box on AM25T
+      AM25T(SYS_PowerBoxTC,1,mV2_5,12,1,TypeT,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 25)
+      'Water temperature thermocouple next to ORP sensor at 5 cm
+      AM25T(MET_WaterT_10cm,1,mV25,15,1,TypeT,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 26)
+      'Water temperature thermocouple next to ORP sensor at 25 cm
+      AM25T(MET_WaterT_30cm,1,mV25,16,1,TypeT,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+      SYS_PanelT_AM25T = SYS_PanelT_AM25T_loop
+    EndIf
+
+    If (PRG_CNT = 27)
+      'Redox Sensor on AM25T at 10 cm
+      AM25T(RAW_WaterORP_10cm,1,mV2500,17,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+      SYS_pHMult_10cm = -1 / (((MET_WaterT_10cm+273.15)/298)*59)
+      MET_WaterPH_10cm = (SYS_pHMult_10cm * RAW_WaterORP_10cm) + CALIB_pH_Offset_10cm
+      MET_WaterORP_10cm = RAW_WaterORP_10cm
+    EndIf
+
+    If (PRG_CNT = 28)
+      'Redox Sensor on AM25T at 30 cm
+      AM25T(RAW_WaterORP_30cm,1,mV2500,18,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+      SYS_pHMult_30cm = -1 / (((MET_WaterT_30cm+273.15)/298)*59)
+      MET_WaterPH_30cm = (SYS_pHMult_30cm * RAW_WaterORP_30cm) + CALIB_pH_Offset_30cm
+      MET_WaterORP_30cm = RAW_WaterORP_30cm
+    EndIf
+
+    If (PRG_CNT = 29)							' replacement sensor added Oct 26, 2017 RK
+      'Water Depth Sensor
+      SDI12Recorder (MET_OTT_PLS(),5,0,"M!",1.0,0)
+      MET_WaterLevel = MET_WaterLevel * 100 ' convert m to cm
+    EndIf
+    
+    If (PRG_CNT = 31)
+      'Current Sensor Battery on Datalogger
+      AM25T(SYS_Batt_DCCurrent,1,mV250,19,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 32)
+      'Voltage Battery Box on Datalogger
+      AM25T(SYS_PBox_Batt_Volt,1,mV2500,20,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,13.9353,0)
+      SYS_PBox_Batt_Volt = SYS_PBox_Batt_Volt / 1000
+    EndIf
+
+    If (PRG_CNT = 33)
+      ' Battery temperature on Power box2
+      'AM25T(SYS_BatteryBoxTC2,1,mV25,21,1,TypeT,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+    EndIf
+    If (PRG_CNT = 34)
+      'Control thermocouple in Power Box on AM25T
+      'AM25T(SYS_PowerBoxTC2,1,mV25,22,1,TypeT,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 35)
+      'Current Sensor Battery on Power box2
+      'AM25T(SYS_Batt_DCCurrent2,1,mV2500,23,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,1,0)
+    EndIf
+
+    If (PRG_CNT = 36)
+      'Voltage Battery Box on Power box2
+      'AM25T(SYS_PBox_Batt_Volt2,1,mV5000,24,1,-1,SYS_PanelT_AM25T_loop,7,8,VX1,True,0,250,8.32,0)
+      'SYS_PBox_Batt_Volt2 = SYS_PBox_Batt_Volt2 / 1000
+    EndIf
+
+    If (PRG_CNT = 37)
+      'Barometric Pressure (added Feb 9, 2018)
+       VoltSe(MET_Barom_Press_mB,1,mV2500,13,False,0,250,0.240,500)
+       MET_Barom_Press_kPa = 0.1 *  MET_Barom_Press_mB
+    EndIf
+
+    If (PRG_CNT = 38)
+      For I = 1 To 16
+        CD16_Output(I) = Flag(I)
+      Next I
+      SDMCD16AC(CD16_Output(), 1, 0)
+    EndIf
+
+'   If (PRG_CNT = 39) put in 1/2 hourly section below
+'  	  'Bog Height Sensor SR-50 (address 1)
+'     SDI12Recorder (RAW_Bog_Height,5,1,"M!",1,0)
+'     MET_Bog_Height = (RAW_Bog_Height * SQR(MET_HMP_T_2m_K/Ref_Temp))*100  ' temp correct for speed of sound and convert m to cm
+'  EndIf
+   
+    'Young 05103 - Wind Speed (added Feb 9 2018)
+    PulseCount(MET_Young_WS,1,1,1,1,0.0980,0)
+
+    'Precipitation Tipping Bucket
+    PulseCount(RAW_RainTips,1,2,2,0,1,0)
+    MET_RainTips=RAW_RainTips*CALIB_RAIN
+'--------------------------------------------------------------------------------------- 1/2 hour only ---------------------------------------------------
+    'Record the Status variables every half hour
+    If TimeIntoInterval(0,30,Min)  Then
+      SYS_WatchdogErrors    = Status.WatchdogErrors(1,1)
+      SYS_SkippedRecords    = Status.SkippedRecord(1,1)
+      SYS_ProcessTime       = Status.ProcessTime(1,1)
+      SYS_MaxProcessTime    = Status.MaxProcTime(1,1)
+      
+	  'Bog Height Sensor SR-50 (address 1) measurement once per 1/2 hour
+     SDI12Recorder (RAW_Bog_Height,5,1,"M!",1,0)
+     MET_HMP_T_2m_K = MET_HMP_T_2m + 273.15 
+     MET_Bog_Height = 300 - (RAW_Bog_Height * SQR(MET_HMP_T_2m_K/Ref_Temp))*100  ' temp correct for speed of sound and convert m to cm
+     ' subtract from 300 to get decreasing value when absolute distance is increasing
+     
+  EndIf
+
+
+ '-------------------- Amspec Control----------------------------------------------
+    If NOT LeaveAmspecAlone Then
+      If runAMSPEConThisDay(SYS_DayOfWeek)  Then
+        If TimeIntoInterval(Amspec_On_Time,1440,min) Then
+          AMSPEC_OFF = false
+        EndIf
+        If TimeIntoInterval(Amspec_Off_Time,1440,min) Then
+          AMSPEC_OFF = true
+        EndIf
+      Else
+        AMSPEC_OFF = true
+      EndIf
+    EndIf
+ '---------------------------------------------------------------------------------
+
+ '-------------------- Modem Control----------------------------------------------
+    If NOT LeaveModemAlone Then
+    	If TimeIntoInterval(0,240,min) Then ' every 4 hrs on the hr, turn modem ON
+     		modem_OFF = False
+   		EndIf
+   		If TimeIntoInterval(15,240,min) Then '15 min after every 4 hrs, turn modem OFF
+     		modem_OFF = True
+    	EndIf
+    End If 
+ '---------------------------------------------------------------------------------
+
+
+    CallTable(MET)
+    CallTable(RAW)
+
+    'Write a file mark to the MET and TUR  series table every day at 23:59:55
+    If (SYS_RealTime(4) = 23 AND SYS_RealTime(5) = 59 AND SYS_RealTime(6) > 53)
+      FileMark(MET)
+      FileMark(RAW)
+    EndIf
+
+'    If PRG_CNT > 0 AND PRG_CNT < 50 Then
+'      ProcessTimes(PRG_CNT) = Timer(1,uSec,4)
+'    EndIf
+'    CallTable saveProcessTimes
+
+
+    PRG_CNT = PRG_CNT + 1 'increase counter for timing
+
+
+  NextScan
+
+
